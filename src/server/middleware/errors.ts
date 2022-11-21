@@ -1,9 +1,9 @@
 import "../../loadEnvironment.js";
 import debugConfig from "debug";
+import chalk from "chalk";
 import type { NextFunction, Request, Response } from "express";
 import type CustomError from "../../CustomError/CustomError.js";
 import httpStatusCodes from "../utils/httpStatusCodes.js";
-import chalk from "chalk/index.js";
 
 const {
   serverErrors: { internalServerError },
