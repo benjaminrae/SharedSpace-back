@@ -8,6 +8,8 @@ interface Environment {
   mongoDbDebug: boolean;
   mongoDbUri: string;
   allowedOrigins: string[];
+  jwtSecret: string;
+  tokenExpiry: string;
 }
 
 const {
@@ -16,6 +18,8 @@ const {
   MONGO_DB_DEBUG: mongoDbDebug,
   MONGO_DB_URI: mongoDbUri,
   ALLOWED_ORIGINS: allowedOrigins,
+  JWT_SECRET: jwtSecret,
+  TOKEN_EXPIRY: tokenExpiry,
 } = process.env;
 
 export const environment: Environment = {
@@ -24,4 +28,6 @@ export const environment: Environment = {
   mongoDbDebug: mongoDbDebug === "true",
   mongoDbUri,
   allowedOrigins: allowedOrigins.split(","),
+  jwtSecret,
+  tokenExpiry,
 };

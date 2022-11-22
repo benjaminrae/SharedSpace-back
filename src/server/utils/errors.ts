@@ -5,10 +5,18 @@ const {
   clientErrors: { unauthorizedCode },
 } = httpStatusCodes;
 
+const incorrectCredentialsMessage = "Incorrect username or password";
+
 export const loginErrors = {
   userNotFoundError: new CustomError(
     "Username not found",
     unauthorizedCode,
-    "Incorrect username or password"
+    incorrectCredentialsMessage
+  ),
+
+  incorrectPasswordError: new CustomError(
+    "Incorrect password",
+    unauthorizedCode,
+    incorrectCredentialsMessage
   ),
 };
