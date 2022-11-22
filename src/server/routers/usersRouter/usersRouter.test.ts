@@ -36,7 +36,7 @@ afterAll(async () => {
 });
 
 const {
-  clientErrors: { badRequestCode },
+  clientErrors: { badRequestCode, unauthorizedCode },
   successCodes: { okCode },
 } = httpStatusCodes;
 
@@ -44,6 +44,7 @@ const { usersLoginPath } = paths;
 
 describe("Given a POST /users/login endpoint", () => {
   const errorProperty = "error";
+  const wrongCredentialsMessage = "Incorrect username or password";
 
   describe("When it receives a request with username 'admi' that is too short and password 'admin123'", () => {
     test("Then it should respond with status 400 and message 'Username must have 5 characters minimum'", async () => {
@@ -101,6 +102,44 @@ describe("Given a POST /users/login endpoint", () => {
         loginBody.username
       );
       expect(tokenPayload as CustomTokenPayload).toHaveProperty(idProperty);
+    });
+  });
+
+  describe("When it receives a request with the correct username 'admin' and incorrect password 'admin456'", () => {
+    test("Then it should respond with status 401 and message 'Incorrect username or password'", async () => {
+      const loginBody: UserStructure = {
+        username: "admin",
+        password: "admin456",
+      };
+
+      const response = await request(app)
+        .post(usersLoginPath)
+        .send(loginBody)
+        .expect(unauthorizedCode);
+
+      expect(response.body).toHaveProperty(
+        errorProperty,
+        wrongCredentialsMessage
+      );
+    });
+  });
+
+  describe("When it receives a request with and incorrect username 'nimda' and password '12345678'", () => {
+    test("Then it should response with status 401 and message 'Incorrect username or password'", async () => {
+      const loginBody: UserStructure = {
+        username: "admin",
+        password: "admin456",
+      };
+
+      const response = await request(app)
+        .post(usersLoginPath)
+        .send(loginBody)
+        .expect(unauthorizedCode);
+
+      expect(response.body).toHaveProperty(
+        errorProperty,
+        wrongCredentialsMessage
+      );
     });
   });
 });
