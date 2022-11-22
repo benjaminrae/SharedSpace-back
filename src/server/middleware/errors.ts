@@ -23,7 +23,7 @@ export const unknownEndpoint = (
     new CustomError(
       `Unknown Endpoint: ${path}`,
       notFoundError,
-      "Unknown endpoint"
+      "Unknown Endpoint"
     )
   );
 };
