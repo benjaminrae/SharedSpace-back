@@ -6,7 +6,7 @@ import httpStatusCodes from "../utils/httpStatusCodes.js";
 const { allowedOrigins } = environment;
 
 const {
-  clientErrors: { badRequest },
+  clientErrors: { badRequestCode },
 } = httpStatusCodes;
 
 const corsOptions: CorsOptions = {
@@ -19,7 +19,7 @@ const corsOptions: CorsOptions = {
     callback(
       new CustomError(
         `${requestOrigin} not allowed by CORS`,
-        badRequest,
+        badRequestCode,
         "Not allowed by CORS"
       ),
       requestOrigin

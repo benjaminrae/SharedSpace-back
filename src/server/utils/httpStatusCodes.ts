@@ -1,10 +1,17 @@
 const httpStatusCodes = {
-  clientErrors: {
-    badRequest: 400,
-    notFoundError: 404,
+  successCodes: {
+    okCode: 200,
   },
+
+  clientErrors: {
+    badRequestCode: 400,
+    unauthorizedCode: 401,
+    forbiddenCode: 403,
+    notFoundErrorCode: 404,
+  },
+
   serverErrors: {
-    internalServerError: 500,
+    internalServerErrorCode: 500,
   },
 };
 

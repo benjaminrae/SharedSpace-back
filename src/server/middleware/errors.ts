@@ -6,8 +6,8 @@ import CustomError from "../../CustomError/CustomError.js";
 import httpStatusCodes from "../utils/httpStatusCodes.js";
 
 const {
-  serverErrors: { internalServerError },
-  clientErrors: { notFoundError },
+  serverErrors: { internalServerErrorCode: internalServerError },
+  clientErrors: { notFoundErrorCode: notFoundError },
 } = httpStatusCodes;
 
 const debug = debugConfig("shared-space:server:middleware:errors");

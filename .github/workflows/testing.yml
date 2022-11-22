@@ -21,3 +21,5 @@ jobs:
           MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
           MONGO_DB_DEBUG: ${{ secrets.MONGO_DB_DEBUG }}
           ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TOKEN_EXPIRY: ${{ secrets.TOKEN_EXPIRY }}

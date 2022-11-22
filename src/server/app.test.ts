@@ -3,7 +3,7 @@ import app from "./app";
 import httpStatusCodes from "./utils/httpStatusCodes";
 
 const {
-  clientErrors: { notFoundError, badRequest },
+  clientErrors: { notFoundErrorCode, badRequestCode },
 } = httpStatusCodes;
 
 describe("Given the GET /hello endpoint", () => {
@@ -16,7 +16,7 @@ describe("Given the GET /hello endpoint", () => {
 
       const response = await request(app)
         .get(unknownEndpoint)
-        .expect(notFoundError);
+        .expect(notFoundErrorCode);
 
       expect(response.body).toHaveProperty(expectedProperty, expectedMessage);
     });
@@ -30,7 +30,7 @@ describe("Given the GET /hello endpoint", () => {
       const response = await request(app)
         .get(unknownEndpoint)
         .set("origin", unknownOrigin)
-        .expect(badRequest);
+        .expect(badRequestCode);
 
       expect(response.body).toHaveProperty(expectedProperty, expectedMessage);
     });

@@ -4,8 +4,8 @@ import httpStatusCodes from "../utils/httpStatusCodes";
 import { generalError, unknownEndpoint } from "./errors";
 
 const {
-  serverErrors: { internalServerError },
-  clientErrors: { notFoundError },
+  serverErrors: { internalServerErrorCode: internalServerError },
+  clientErrors: { notFoundErrorCode: notFoundError },
 } = httpStatusCodes;
 
 beforeEach(() => {
