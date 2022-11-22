@@ -10,6 +10,7 @@ interface Environment {
   allowedOrigins: string[];
   jwtSecret: string;
   tokenExpiry: string;
+  saltLength: number;
 }
 
 const {
@@ -20,6 +21,7 @@ const {
   ALLOWED_ORIGINS: allowedOrigins,
   JWT_SECRET: jwtSecret,
   TOKEN_EXPIRY: tokenExpiry,
+  SALT_LENGTH: saltLength,
 } = process.env;
 
 export const environment: Environment = {
@@ -30,4 +32,5 @@ export const environment: Environment = {
   allowedOrigins: allowedOrigins.split(","),
   jwtSecret,
   tokenExpiry,
+  saltLength: +saltLength,
 };
