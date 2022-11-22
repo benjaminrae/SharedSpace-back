@@ -24,6 +24,7 @@ jobs:
           ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           TOKEN_EXPIRY: ${{ secrets.TOKEN_EXPIRY }}
+          SALT_LENGTH: ${{ secrets.SALT_LENGTH }}
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

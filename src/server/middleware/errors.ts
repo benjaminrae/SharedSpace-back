@@ -1,5 +1,6 @@
 import "../../loadEnvironment.js";
 import debugConfig from "debug";
+import { ValidationError } from "express-validation";
 import chalk from "chalk";
 import type { NextFunction, Request, Response } from "express";
 import CustomError from "../../CustomError/CustomError.js";
@@ -35,6 +36,14 @@ export const generalError = (
   // eslint-disable-next-line no-unused-vars
   next: NextFunction
 ) => {
+  if (error instanceof ValidationError) {
+    const validationErrors = error.details.body
+      .map((joiError) => joiError.message)
+      .join("\n");
+
+    error.publicMessage = validationErrors;
+  }
+
   const publicMessage =
     error.publicMessage || "There was a problem on the server";
 
