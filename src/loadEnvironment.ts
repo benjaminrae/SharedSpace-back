@@ -7,6 +7,7 @@ interface Environment {
   debug: string;
   mongoDbDebug: boolean;
   mongoDbUri: string;
+  allowedOrigins: string[];
 }
 
 const {
@@ -14,6 +15,7 @@ const {
   DEBUG: debug,
   MONGO_DB_DEBUG: mongoDbDebug,
   MONGO_DB_URI: mongoDbUri,
+  ALLOWED_ORIGINS: allowedOrigins,
 } = process.env;
 
 export const environment: Environment = {
@@ -21,4 +23,5 @@ export const environment: Environment = {
   debug,
   mongoDbDebug: mongoDbDebug === "true",
   mongoDbUri,
+  allowedOrigins: allowedOrigins.split(","),
 };
