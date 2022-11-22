@@ -19,6 +19,12 @@ module.exports = {
         "no-implicit-coercion": "off",
       },
     },
+    {
+      files: ["src/**/models/*.ts"],
+      rules: {
+        "@typescript-eslint/naming-convention": "off",
+      },
+    },
   ],
   parserOptions: {
     ecmaVersion: "latest",
