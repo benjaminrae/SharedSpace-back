@@ -7,7 +7,8 @@
     "outDir": "./build/" /* Specify an output folder for all emitted files. */,
     "noEmitOnError": true /* Disable emitting files if any type checking errors are reported. */,
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
-    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied `any` type.. */
+    "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied `any` type.. */,
+    "noImplicitThis": true
   },
   "include": ["src/**/*.ts"]
 }
