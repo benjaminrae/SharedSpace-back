@@ -1,13 +1,16 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import type { UserStructure } from "../../../database/models/types";
 import User from "../../../database/models/User";
 import { loginErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import { loginUser } from "./userControllers";
+import mongoose from "mongoose";
 
 const {
   clientErrors: { unauthorizedCode },
+  successCodes: { okCode },
 } = httpStatusCodes;
 
 beforeEach(() => {
@@ -68,6 +71,38 @@ describe("Given a loginUser controller", () => {
         "publicMessage",
         wrongCredentialsMessage
       );
+    });
+  });
+
+  describe("When it receives a request with username 'admin' and correct password 'admin123' and a response", () => {
+    test("Then it should invoke responses status method with 200 and json method with a token", async () => {
+      const token = "testtoken";
+      const id = new mongoose.Types.ObjectId();
+      req.body = loginBody;
+
+      User.findOne = jest.fn().mockResolvedValue({ ...loginBody, _id: id });
+
+      bcrypt.compare = jest.fn().mockResolvedValue(true);
+
+      jwt.sign = jest.fn().mockReturnValue(token);
+
+      await loginUser(req as Request, res as Response, next as NextFunction);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({ token });
+    });
+  });
+
+  describe("When it receives a request with username 'admin' and password 'admin123' and User.findOne rejects", () => {
+    test("Then next shpuld be invoked with the thrown error", async () => {
+      req.body = loginBody;
+      const error = new Error("");
+
+      User.findOne = jest.fn().mockRejectedValue(error);
+
+      await loginUser(req as Request, res as Response, next as NextFunction);
+
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 });
