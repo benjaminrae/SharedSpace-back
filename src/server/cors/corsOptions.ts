@@ -1,7 +1,9 @@
 import type { CorsOptions } from "cors";
 import CustomError from "../../CustomError/CustomError.js";
-import allowedOrigins from "./allowedOrigins.js";
+import { environment } from "../../loadEnvironment.js";
 import httpStatusCodes from "../utils/httpStatusCodes.js";
+
+const { allowedOrigins } = environment;
 
 const {
   clientErrors: { badRequest },

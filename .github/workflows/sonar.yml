@@ -17,6 +17,11 @@ jobs:
         run: npm ci
       - name: Coverage
         run: npm run test:coverage
+        env:
+          DEBUG: ${{ secrets.DEBUG }}
+          MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
+          MONGO_DB_DEBUG: ${{ secrets.MONGO_DB_DEBUG }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
