@@ -5,6 +5,7 @@ import {
   registerUser,
 } from "../../controllers/userControllers/userControllers.js";
 import loginUserSchema from "../../schemas/loginUserSchema.js";
+import registerUserSchema from "../../schemas/registerUserSchema.js";
 import paths from "../paths.js";
 
 const {
@@ -20,6 +21,10 @@ usersRouter.post(
   loginUser
 );
 
-usersRouter.post(registerPath, registerUser);
+usersRouter.post(
+  registerPath,
+  validate(registerUserSchema, {}, { abortEarly: false }),
+  registerUser
+);
 
 export default usersRouter;
