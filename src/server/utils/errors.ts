@@ -20,3 +20,11 @@ export const loginErrors = {
     incorrectCredentialsMessage
   ),
 };
+
+export const registerErrors = {
+  alreadyRegisteredError: new CustomError(
+    "User already exists",
+    409,
+    "You already have an account"
+  ),
+};

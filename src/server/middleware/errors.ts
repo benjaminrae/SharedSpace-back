@@ -44,6 +44,8 @@ export const generalError = (
     error.publicMessage = validationErrors;
   }
 
+  debug(error);
+
   const publicMessage =
     error.publicMessage || "There was a problem on the server";
 
