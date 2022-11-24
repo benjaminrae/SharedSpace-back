@@ -5,7 +5,7 @@ import type { UserStructure } from "../../../database/models/types";
 import User from "../../../database/models/User";
 import { loginErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
-import { loginUser } from "./userControllers";
+import { loginUser, registerUser } from "./userControllers";
 import mongoose from "mongoose";
 
 const {
@@ -104,5 +104,35 @@ describe("Given a loginUser controller", () => {
 
       expect(next).toHaveBeenCalledWith(error);
     });
+  });
+});
+
+describe("Given a registerUser controller", () => {
+  describe("When it receives a request with username 'admin' and password 'admin123'", () => {
+    test("Then it should invoke response's status method with 201", async () => {
+      const registerBody: UserStructure = {
+        username: "admin",
+        password: "admin123",
+      };
+      req.body = registerBody;
+      const hashedPassword = "hashedpassword";
+      const expectedStatus = 201;
+
+      bcrypt.hash = jest.fn().mockResolvedValue(hashedPassword);
+
+      User.create = jest.fn();
+
+      await registerUser(req as Request, res as Response, next as NextFunction);
+
+      expect(res.status).toHaveBeenCalledWith(expectedStatus);
+    });
+  });
+
+  describe("When it receives a request with username 'nimda' and password 'nimda123' but the username already exists", () => {
+    test("Then it should invoke next with an error with status 409 and message 'You already have an account'", () => {});
+  });
+
+  describe("When it receives a request with username 'admin' and password 'admin123', a next function and bcrypt rejects", () => {
+    test("Then it should invoke next with the thrown error", () => {});
   });
 });
