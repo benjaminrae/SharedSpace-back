@@ -1,6 +1,7 @@
 const httpStatusCodes = {
   successCodes: {
     okCode: 200,
+    createdCode: 201,
   },
 
   clientErrors: {

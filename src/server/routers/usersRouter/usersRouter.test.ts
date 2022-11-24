@@ -38,7 +38,7 @@ afterAll(async () => {
 
 const {
   clientErrors: { badRequestCode, unauthorizedCode, conflictsErrorCode },
-  successCodes: { okCode },
+  successCodes: { okCode, createdCode },
 } = httpStatusCodes;
 
 const { usersLoginPath, usersRegisterPath } = paths;
@@ -179,6 +179,24 @@ describe("Given a POST /users/register endpoint", () => {
         .expect(conflictsErrorCode);
 
       expect(response.body).toHaveProperty("error", expectedMessage);
+    });
+  });
+
+  describe("When it receives a request with unregistered username 'nimda', password 'nimda123' and matching confirm password", () => {
+    test("Then it should respond with status 201 and message 'You have registered successfully'", async () => {
+      const registerBody: RegisterUserBody = {
+        username: "nimda",
+        password: "nimda123",
+        confirmPassword: "nimda123",
+      };
+      const message = "You have registered successfully";
+
+      const response = await request(app)
+        .post(usersRegisterPath)
+        .send(registerBody)
+        .expect(createdCode);
+
+      expect(response.body).toStrictEqual({ message });
     });
   });
 });

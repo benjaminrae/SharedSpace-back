@@ -59,7 +59,7 @@ export const registerUser = async (
       password: hashedPassword,
     });
 
-    res.status(201);
+    res.status(201).json({ message: "You have registered successfully" });
   } catch (error: unknown) {
     if ((error as Error).message.includes("duplicate key")) {
       next(alreadyRegisteredError);
