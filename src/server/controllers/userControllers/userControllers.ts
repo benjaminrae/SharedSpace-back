@@ -3,11 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { UserStructure } from "../../../database/models/types";
 import User from "../../../database/models/User.js";
-import { loginErrors } from "../../utils/errors.js";
+import { loginErrors, registerErrors } from "../../utils/errors.js";
 import type { CustomTokenPayload } from "./types";
 import { environment } from "../../../loadEnvironment.js";
+import type { MongoError } from "mongodb";
 
-const { jwtSecret, tokenExpiry } = environment;
+const { jwtSecret, tokenExpiry, saltLength } = environment;
 
 export const loginUser = async (
   req: Request<Record<string, unknown>, Record<string, unknown>, UserStructure>,
@@ -39,6 +40,33 @@ export const loginUser = async (
 
     res.status(200).json({ token });
   } catch (error: unknown) {
+    next(error);
+  }
+};
+
+export const registerUser = async (
+  req: Request<Record<string, unknown>, Record<string, unknown>, UserStructure>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { password, username } = req.body;
+  const { alreadyRegisteredError } = registerErrors;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltLength);
+
+    await User.create({
+      username,
+      password: hashedPassword,
+    });
+
+    res.status(201);
+  } catch (error: unknown) {
+    if ((error as MongoError).code === "E11000") {
+      next(alreadyRegisteredError);
+      return;
+    }
+
     next(error);
   }
 };
