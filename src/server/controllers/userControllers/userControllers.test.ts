@@ -7,7 +7,6 @@ import { loginErrors, registerErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import { loginUser, registerUser } from "./userControllers";
 import mongoose from "mongoose";
-import { MongoServerError } from "mongodb";
 
 const {
   clientErrors: { unauthorizedCode },
@@ -130,17 +129,16 @@ describe("Given a registerUser controller", () => {
   });
 
   describe("When it receives a request with username 'nimda' and password 'nimda123' but the username already exists", () => {
-    test("Then it should invoke next with an error with status 409 and message 'You already have an account'", async () => {
+    test("Then it should invoke next with an error with status 409 and message 'That username is taken'", async () => {
       const registerBody: UserStructure = {
         username: "nimda",
         password: "nimda123",
       };
       req.body = registerBody;
       const hashedPassword = "hashedpassword";
-      const error = new MongoServerError({});
-      error.code = "E11000";
+      const error = new Error("duplicate key");
       const expectedStatus = 409;
-      const expectedMessage = "You already have an account";
+      const expectedMessage = "That username is taken";
 
       bcrypt.hash = jest.fn().mockResolvedValue(hashedPassword);
 
