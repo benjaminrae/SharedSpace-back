@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import User from "../../../database/models/User";
 import { environment } from "../../../loadEnvironment";
 import type { CustomTokenPayload } from "../../controllers/userControllers/types";
+import type { RegisterUserBody } from "../../schemas/registerUserSchema";
 
 const { saltLength } = environment;
 
@@ -40,7 +41,7 @@ const {
   successCodes: { okCode },
 } = httpStatusCodes;
 
-const { usersLoginPath } = paths;
+const { usersLoginPath, usersRegisterPath } = paths;
 
 describe("Given a POST /users/login endpoint", () => {
   const errorProperty = "error";
@@ -140,6 +141,26 @@ describe("Given a POST /users/login endpoint", () => {
         errorProperty,
         wrongCredentialsMessage
       );
+    });
+  });
+});
+
+describe("Given a POST /users/register endpoint", () => {
+  describe("When it receives a request with username 'admin', password 'admin123' and confirm password 'admin'", () => {
+    test("Then it should respond with status 400 and message 'Passwords must match'", async () => {
+      const registerBody: RegisterUserBody = {
+        username: "admin",
+        password: "admin123",
+        confirmPassword: "admin",
+      };
+      const expectedMessage = "Passwords must match";
+
+      const response = await request(app)
+        .post(usersRegisterPath)
+        .send(registerBody)
+        .expect(badRequestCode);
+
+      expect(response.body).toHaveProperty("error", expectedMessage);
     });
   });
 });

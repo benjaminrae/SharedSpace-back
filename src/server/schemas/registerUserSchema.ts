@@ -6,7 +6,7 @@ import {
   stringMinimumProperty,
 } from "./schemaProperties.js";
 
-interface RegisterUserBody extends UserStructure {
+export interface RegisterUserBody extends UserStructure {
   confirmPassword: string;
 }
 
