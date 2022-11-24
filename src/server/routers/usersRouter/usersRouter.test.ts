@@ -37,7 +37,7 @@ afterAll(async () => {
 });
 
 const {
-  clientErrors: { badRequestCode, unauthorizedCode },
+  clientErrors: { badRequestCode, unauthorizedCode, conflictsErrorCode },
   successCodes: { okCode },
 } = httpStatusCodes;
 
@@ -159,6 +159,24 @@ describe("Given a POST /users/register endpoint", () => {
         .post(usersRegisterPath)
         .send(registerBody)
         .expect(badRequestCode);
+
+      expect(response.body).toHaveProperty("error", expectedMessage);
+    });
+  });
+
+  describe("When it receives a request with username 'admin', password 'admin123', confirm password 'admin123' and the username already exists on the server", () => {
+    test("Then it should respond with status 409 and message 'That username is taken'", async () => {
+      const registerBody: RegisterUserBody = {
+        username: "admin",
+        password: "admin123",
+        confirmPassword: "admin123",
+      };
+      const expectedMessage = "That username is taken";
+
+      const response = await request(app)
+        .post(usersRegisterPath)
+        .send(registerBody)
+        .expect(conflictsErrorCode);
 
       expect(response.body).toHaveProperty("error", expectedMessage);
     });

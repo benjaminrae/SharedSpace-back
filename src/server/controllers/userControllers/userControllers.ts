@@ -6,7 +6,6 @@ import User from "../../../database/models/User.js";
 import { loginErrors, registerErrors } from "../../utils/errors.js";
 import type { CustomTokenPayload } from "./types";
 import { environment } from "../../../loadEnvironment.js";
-import type { MongoError } from "mongodb";
 
 const { jwtSecret, tokenExpiry, saltLength } = environment;
 
@@ -62,7 +61,7 @@ export const registerUser = async (
 
     res.status(201);
   } catch (error: unknown) {
-    if ((error as MongoError).code === "E11000") {
+    if ((error as Error).message.includes("duplicate key")) {
       next(alreadyRegisteredError);
       return;
     }

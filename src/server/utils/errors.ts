@@ -2,7 +2,7 @@ import CustomError from "../../CustomError/CustomError.js";
 import httpStatusCodes from "./httpStatusCodes.js";
 
 const {
-  clientErrors: { unauthorizedCode },
+  clientErrors: { unauthorizedCode, conflictsErrorCode },
 } = httpStatusCodes;
 
 const incorrectCredentialsMessage = "Incorrect username or password";
@@ -24,7 +24,7 @@ export const loginErrors = {
 export const registerErrors = {
   alreadyRegisteredError: new CustomError(
     "User already exists",
-    409,
-    "You already have an account"
+    conflictsErrorCode,
+    "That username is taken"
   ),
 };
