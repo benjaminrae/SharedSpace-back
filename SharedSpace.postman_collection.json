@@ -1,0 +1,95 @@
+{
+  "info": {
+    "_postman_id": "0b67848d-42e8-4af4-99cc-bee6d920ac00",
+    "name": "SharedSpace",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "21332225"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{origin}}/users/login",
+              "host": ["{{origin}}"],
+              "path": ["users", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Locations",
+      "item": []
+    },
+    {
+      "name": "Get Unknown Endpoint",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{origin}}/hello",
+          "host": ["{{origin}}"],
+          "path": ["hello"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Options Cors Error",
+      "request": {
+        "method": "OPTIONS",
+        "header": [
+          {
+            "key": "Origin",
+            "value": "http://localhost:1234",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{origin}}",
+          "host": ["{{origin}}"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "origin",
+      "value": "https://benjamin-rae-back-final-project-202209.onrender.com",
+      "type": "string"
+    }
+  ]
+}
