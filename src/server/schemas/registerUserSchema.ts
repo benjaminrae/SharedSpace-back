@@ -2,6 +2,7 @@ import { Joi } from "express-validation";
 import type { UserStructure } from "../../database/models/types";
 import {
   anyOnlyProperty,
+  booleanEmptyProperty,
   stringEmptyProperty,
   stringMinimumProperty,
 } from "./schemaProperties.js";
@@ -34,6 +35,12 @@ const registerUserSchema = {
       .messages({
         [anyOnlyProperty]: "Passwords must match",
         [stringEmptyProperty]: "Password is required",
+      }),
+    owner: Joi.boolean()
+      .required()
+      .label("Owner")
+      .messages({
+        [booleanEmptyProperty]: "Owner is required",
       }),
   }),
 };
