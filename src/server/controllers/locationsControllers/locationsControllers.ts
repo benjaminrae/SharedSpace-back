@@ -22,10 +22,12 @@ export const addLocation = async (
     });
 
     res.status(201).json({
-      ...newLocation.toJSON(),
-      images: {
-        image: newLocation.images.image,
-        small: newLocation.images.small,
+      location: {
+        ...newLocation.toJSON(),
+        images: {
+          image: newLocation.images.image,
+          small: newLocation.images.small,
+        },
       },
     });
   } catch (error: unknown) {
