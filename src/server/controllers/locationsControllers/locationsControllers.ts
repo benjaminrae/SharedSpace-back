@@ -1,13 +1,13 @@
 import type { Response, NextFunction } from "express";
 import Location from "../../../database/models/Location";
 import type { CustomRequest } from "../../middleware/auth/types";
-import type { AddLocationBody } from "./types";
+import type { LocationStructure } from "./types";
 
 export const addLocation = async (
   req: CustomRequest<
     Record<string, unknown>,
     Record<string, unknown>,
-    AddLocationBody
+    LocationStructure
   >,
   res: Response,
   next: NextFunction
