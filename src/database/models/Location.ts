@@ -33,6 +33,20 @@ export const locationSchema = new Schema({
     tv: { type: Boolean },
     whiteboard: { type: Boolean },
   },
+  images: {
+    image: {
+      type: String,
+    },
+    small: {
+      type: String,
+    },
+    backup: {
+      type: String,
+    },
+    backupSmall: {
+      type: String,
+    },
+  },
 });
 
 const Location = model("Location", locationSchema, "locations");
