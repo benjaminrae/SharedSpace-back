@@ -40,7 +40,7 @@ describe("Given the auth middleware", () => {
   describe("When it receives a CustomRequest with an auth header that doesn't start with 'Bearer'", () => {
     test("Then it should invoke next with an error with status 401 and message 'Bad token'", () => {
       const expectedErrorMessage = "Bad token";
-      req.header = jest.fn().mockReturnValueOnce("");
+      req.header = jest.fn().mockReturnValueOnce("1234");
 
       auth(req as CustomRequest, res as Response, next);
 
