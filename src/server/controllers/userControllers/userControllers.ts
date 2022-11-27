@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { UserStructure } from "../../../database/models/types";
+import type { LoginCredentials } from "../../../database/models/types";
 import User from "../../../database/models/User.js";
 import { loginErrors, registerErrors } from "../../utils/errors.js";
 import type { CustomTokenPayload } from "./types";
@@ -10,7 +10,11 @@ import { environment } from "../../../loadEnvironment.js";
 const { jwtSecret, tokenExpiry, saltLength } = environment;
 
 export const loginUser = async (
-  req: Request<Record<string, unknown>, Record<string, unknown>, UserStructure>,
+  req: Request<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    LoginCredentials
+  >,
   res: Response,
   next: NextFunction
 ) => {
@@ -44,7 +48,11 @@ export const loginUser = async (
 };
 
 export const registerUser = async (
-  req: Request<Record<string, unknown>, Record<string, unknown>, UserStructure>,
+  req: Request<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    LoginCredentials
+  >,
   res: Response,
   next: NextFunction
 ) => {
