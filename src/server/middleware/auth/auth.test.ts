@@ -4,7 +4,7 @@ import httpStatusCodes from "../../utils/httpStatusCodes";
 import auth from "./auth";
 import type { CustomRequest } from "./types";
 
-const { noTokenError } = authErrors;
+const { noTokenError, missingBearerError } = authErrors;
 
 const {
   clientErrors: { unauthorizedCode },
@@ -19,13 +19,33 @@ const next: NextFunction = jest.fn();
 describe("Given the auth middleware", () => {
   describe("When it receives a CustomRequest with no auth header", () => {
     test("Then it should invoke next with an error with status 401 and message 'No token provided'", () => {
+      const expectedErrorMessage = "No token provided";
       req.header = jest.fn().mockReturnValueOnce(undefined);
 
       auth(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(noTokenError);
       expect(noTokenError).toHaveProperty("statusCode", unauthorizedCode);
-      expect(noTokenError).toHaveProperty("publicMessage", "No token provided");
+      expect(noTokenError).toHaveProperty(
+        "publicMessage",
+        expectedErrorMessage
+      );
+    });
+  });
+
+  describe("When it receives a CustomRequest with an auth header that doesn't start with 'Bearer'", () => {
+    test("Then it should invoke next with an error with status 401 and message 'Bad token'", () => {
+      const expectedErrorMessage = "Bad token";
+      req.header = jest.fn().mockReturnValueOnce("");
+
+      auth(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(missingBearerError);
+      expect(missingBearerError).toHaveProperty("statusCode", unauthorizedCode);
+      expect(missingBearerError).toHaveProperty(
+        "publicMessage",
+        expectedErrorMessage
+      );
     });
   });
 });
