@@ -10,6 +10,10 @@ export const userSchema = new Schema({
     type: String,
     required: true,
   },
+  owner: {
+    type: Boolean,
+    required: true,
+  },
 });
 
 const User = model("User", userSchema, "users");
