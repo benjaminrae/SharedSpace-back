@@ -1,10 +1,10 @@
-import "../../loadEnvironment.js";
+import "../../../loadEnvironment.js";
 import debugConfig from "debug";
 import { ValidationError } from "express-validation";
 import chalk from "chalk";
 import type { NextFunction, Request, Response } from "express";
-import CustomError from "../../CustomError/CustomError.js";
-import httpStatusCodes from "../utils/httpStatusCodes.js";
+import CustomError from "../../../CustomError/CustomError.js";
+import httpStatusCodes from "../../utils/httpStatusCodes.js";
 
 const {
   serverErrors: { internalServerErrorCode: internalServerError },
