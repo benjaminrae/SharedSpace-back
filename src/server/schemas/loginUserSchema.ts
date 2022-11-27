@@ -1,12 +1,12 @@
 import { Joi } from "express-validation";
-import type { UserStructure } from "../../database/models/types";
+import type { LoginCredentials } from "../../database/models/types";
 import {
   stringEmptyProperty,
   stringMinimumProperty,
 } from "./schemaProperties.js";
 
 const loginUserSchema = {
-  body: Joi.object<UserStructure>({
+  body: Joi.object<LoginCredentials>({
     username: Joi.string()
       .min(5)
       .required()

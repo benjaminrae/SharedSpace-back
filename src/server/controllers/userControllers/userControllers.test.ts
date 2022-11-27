@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { UserStructure } from "../../../database/models/types";
+import type { LoginCredentials } from "../../../database/models/types";
 import User from "../../../database/models/User";
 import { loginErrors, registerErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
@@ -28,7 +28,7 @@ const next = jest.fn();
 
 describe("Given a loginUser controller", () => {
   const wrongCredentialsMessage = "Incorrect username or password";
-  const loginBody: UserStructure = {
+  const loginBody: LoginCredentials = {
     username: "admin",
     password: "admin123",
   };
@@ -110,7 +110,7 @@ describe("Given a loginUser controller", () => {
 describe("Given a registerUser controller", () => {
   describe("When it receives a request with username 'admin' and password 'admin123'", () => {
     test("Then it should invoke response's status method with 201", async () => {
-      const registerBody: UserStructure = {
+      const registerBody: LoginCredentials = {
         username: "admin",
         password: "admin123",
       };
@@ -130,7 +130,7 @@ describe("Given a registerUser controller", () => {
 
   describe("When it receives a request with username 'nimda' and password 'nimda123' but the username already exists", () => {
     test("Then it should invoke next with an error with status 409 and message 'That username is taken'", async () => {
-      const registerBody: UserStructure = {
+      const registerBody: LoginCredentials = {
         username: "nimda",
         password: "nimda123",
       };
@@ -160,7 +160,7 @@ describe("Given a registerUser controller", () => {
 
   describe("When it receives a request with username 'admin' and password 'admin123', a next function and bcrypt rejects", () => {
     test("Then it should invoke next with the thrown error", async () => {
-      const registerBody: UserStructure = {
+      const registerBody: LoginCredentials = {
         username: "nimda",
         password: "nimda123",
       };

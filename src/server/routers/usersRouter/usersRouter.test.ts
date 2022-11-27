@@ -2,7 +2,7 @@ import request from "supertest";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import type { UserStructure } from "../../../database/models/types";
+import type { LoginCredentials } from "../../../database/models/types";
 import app from "../../app";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import paths from "../paths";
@@ -17,7 +17,7 @@ const { saltLength } = environment;
 
 let server: MongoMemoryServer;
 
-const loginBody: UserStructure = {
+const loginBody: LoginCredentials = {
   username: "admin",
   password: "admin123",
 };
@@ -28,7 +28,11 @@ beforeAll(async () => {
 
   const hashedPassword = await bcrypt.hash(loginBody.password, saltLength);
 
-  await User.create({ username: loginBody.username, password: hashedPassword });
+  await User.create({
+    username: loginBody.username,
+    password: hashedPassword,
+    owner: false,
+  });
 });
 
 afterAll(async () => {
@@ -49,7 +53,7 @@ describe("Given a POST /users/login endpoint", () => {
 
   describe("When it receives a request with username 'admi' that is too short and password 'admin123'", () => {
     test("Then it should respond with status 400 and message 'Username must have 5 characters minimum'", async () => {
-      const loginBody: UserStructure = {
+      const loginBody: LoginCredentials = {
         username: "admi",
         password: "admin123",
       };
@@ -66,7 +70,7 @@ describe("Given a POST /users/login endpoint", () => {
 
   describe("When it receives a request with username 'admin' and an empty password", () => {
     test("Then it should respond with status 400 and message 'Password is required'", async () => {
-      const loginBody: UserStructure = {
+      const loginBody: LoginCredentials = {
         username: "admin",
         password: "",
       };
@@ -108,7 +112,7 @@ describe("Given a POST /users/login endpoint", () => {
 
   describe("When it receives a request with the correct username 'admin' and incorrect password 'admin456'", () => {
     test("Then it should respond with status 401 and message 'Incorrect username or password'", async () => {
-      const loginBody: UserStructure = {
+      const loginBody: LoginCredentials = {
         username: "admin",
         password: "admin456",
       };
@@ -127,7 +131,7 @@ describe("Given a POST /users/login endpoint", () => {
 
   describe("When it receives a request with and incorrect username 'nimda' and password '12345678'", () => {
     test("Then it should response with status 401 and message 'Incorrect username or password'", async () => {
-      const loginBody: UserStructure = {
+      const loginBody: LoginCredentials = {
         username: "admin",
         password: "admin456",
       };
@@ -152,6 +156,7 @@ describe("Given a POST /users/register endpoint", () => {
         username: "admin",
         password: "admin123",
         confirmPassword: "admin",
+        owner: false,
       };
       const expectedMessage = "Passwords must match";
 
@@ -170,6 +175,7 @@ describe("Given a POST /users/register endpoint", () => {
         username: "admin",
         password: "admin123",
         confirmPassword: "admin123",
+        owner: false,
       };
       const expectedMessage = "That username is taken";
 
@@ -188,6 +194,7 @@ describe("Given a POST /users/register endpoint", () => {
         username: "nimda",
         password: "nimda123",
         confirmPassword: "nimda123",
+        owner: false,
       };
       const message = "You have registered successfully";
 
