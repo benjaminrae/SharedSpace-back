@@ -6,6 +6,7 @@ import User from "../../../database/models/User.js";
 import { loginErrors, registerErrors } from "../../utils/errors.js";
 import type { CustomTokenPayload } from "./types";
 import { environment } from "../../../loadEnvironment.js";
+import type { RegisterUserBody } from "../../schemas/registerUserSchema";
 
 const { jwtSecret, tokenExpiry, saltLength } = environment;
 
@@ -51,12 +52,12 @@ export const registerUser = async (
   req: Request<
     Record<string, unknown>,
     Record<string, unknown>,
-    LoginCredentials
+    RegisterUserBody
   >,
   res: Response,
   next: NextFunction
 ) => {
-  const { password, username } = req.body;
+  const { password, username, owner } = req.body;
   const { alreadyRegisteredError } = registerErrors;
 
   try {
@@ -64,6 +65,7 @@ export const registerUser = async (
 
     await User.create({
       username,
+      owner,
       password: hashedPassword,
     });
 

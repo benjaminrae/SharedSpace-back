@@ -28,7 +28,11 @@ beforeAll(async () => {
 
   const hashedPassword = await bcrypt.hash(loginBody.password, saltLength);
 
-  await User.create({ username: loginBody.username, password: hashedPassword });
+  await User.create({
+    username: loginBody.username,
+    password: hashedPassword,
+    owner: false,
+  });
 });
 
 afterAll(async () => {
