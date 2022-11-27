@@ -50,4 +50,20 @@ describe("Given an addLocation controller", () => {
       });
     });
   });
+
+  describe(`When it receives a CustomRequest with userId ${newLocation.owner.toString()} and location ${
+    newLocation.name
+  } in the body but document creation rejects`, () => {
+    test("Then next should be called with the thrown error", async () => {
+      req.userId = newLocation.owner.toString();
+      req.body = newLocation;
+
+      const error = new Error("");
+      Location.create = jest.fn().mockRejectedValue(error);
+
+      await addLocation(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 });
