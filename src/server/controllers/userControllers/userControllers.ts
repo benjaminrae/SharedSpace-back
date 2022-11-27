@@ -38,6 +38,7 @@ export const loginUser = async (
     const tokenPayload: CustomTokenPayload = {
       username,
       id: user._id.toString(),
+      owner: user.owner,
     };
 
     const token = jwt.sign(tokenPayload, jwtSecret, { expiresIn: tokenExpiry });
