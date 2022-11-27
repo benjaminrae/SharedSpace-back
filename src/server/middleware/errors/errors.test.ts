@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import CustomError from "../../CustomError/CustomError";
-import httpStatusCodes from "../utils/httpStatusCodes";
+import CustomError from "../../../CustomError/CustomError";
+import httpStatusCodes from "../../utils/httpStatusCodes";
 import { generalError, unknownEndpoint } from "./errors";
 
 const {

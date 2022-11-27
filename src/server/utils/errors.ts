@@ -28,3 +28,17 @@ export const registerErrors = {
     "That username is taken"
   ),
 };
+
+export const authErrors = {
+  noTokenError: new CustomError(
+    "No token provided",
+    unauthorizedCode,
+    "No token provided"
+  ),
+
+  missingBearerError: new CustomError(
+    "Missing Bearer in token",
+    401,
+    "Bad token"
+  ),
+};
