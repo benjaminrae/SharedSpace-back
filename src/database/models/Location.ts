@@ -1,4 +1,3 @@
-import { ObjectId } from "bson";
 import { Schema, model } from "mongoose";
 
 export const locationSchema = new Schema({
@@ -11,7 +10,7 @@ export const locationSchema = new Schema({
     required: true,
   },
   owner: {
-    type: ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
@@ -32,6 +31,20 @@ export const locationSchema = new Schema({
     scanner: { type: Boolean },
     tv: { type: Boolean },
     whiteboard: { type: Boolean },
+  },
+  images: {
+    image: {
+      type: String,
+    },
+    small: {
+      type: String,
+    },
+    backup: {
+      type: String,
+    },
+    backupSmall: {
+      type: String,
+    },
   },
 });
 
