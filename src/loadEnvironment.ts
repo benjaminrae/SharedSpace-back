@@ -31,7 +31,7 @@ const {
   SUPABASE_KEY: supabaseKey,
   SUPABASE_BUCKET: supabaseBucket,
   UPLOAD_PATH: uploadPath,
-  MAX_UPlOAD_SIZE: maxUploadSize,
+  MAX_UPLOAD_SIZE: maxUploadSize,
 } = process.env;
 
 export const environment: Environment = {
