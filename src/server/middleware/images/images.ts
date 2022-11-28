@@ -4,6 +4,7 @@ import type { CustomRequest } from "../auth/types";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import { bucket } from "../../utils/supabaseConfig";
+import path from "path";
 
 export const backupImages = async (
   req: CustomRequest<
@@ -40,6 +41,28 @@ export const backupImages = async (
     images.backup = mainPublicUrl;
     images.backupSmall = smallPublicUrl;
 
+    next();
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+export const renameImages = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const timeStamp = Date.now();
+
+  const fileExtension = path.extname(req.file.originalname);
+  const fileBaseName = path.basename(req.file.originalname, fileExtension);
+  const newFileName = `${fileBaseName}-${timeStamp}${fileExtension}`;
+  const newFilePath = getUploadPath(newFileName);
+
+  try {
+    await fs.rename(getUploadPath(req.file.filename), newFilePath);
+
+    req.file.filename = newFileName;
     next();
   } catch (error: unknown) {
     next(error);
