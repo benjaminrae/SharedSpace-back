@@ -1,7 +1,7 @@
 import type { Response, NextFunction } from "express";
 import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
-import doesFileExist from "../../utils/doesFileExist/doesFileExist.js";
+import doesFileExist from "../../utils/files/doesFileExist.js";
 import type { LocationStructure } from "./types";
 
 export const addLocation = async (

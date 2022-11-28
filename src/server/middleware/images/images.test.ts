@@ -5,7 +5,7 @@ import { backupImages, renameImages, resizeImages } from "./images";
 import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import path from "path";
-import cleanUploads from "../../utils/cleanUploads/cleanUploads";
+import cleanUploads from "../../utils/files/cleanUploads";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 
 const uploadsPath = "uploads";
