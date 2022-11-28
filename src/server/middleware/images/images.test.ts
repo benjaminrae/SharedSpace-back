@@ -2,15 +2,24 @@ import fs from "fs/promises";
 import type { NextFunction } from "express";
 import { getRandomLocation } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../auth/types";
-import { backupImages, renameImages } from "./images";
+import { backupImages, renameImages, resizeImages } from "./images";
 import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
+import path from "path";
+import cleanUploads from "../../utils/cleanUploads/cleanUploads";
+import type { LocationStructure } from "../../controllers/locationsControllers/types";
 
 const newLocation = getRandomLocation();
 delete newLocation.images.backup;
 delete newLocation.images.backupSmall;
 
-const req: Partial<CustomRequest> = {
+const req: Partial<
+  CustomRequest<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    LocationStructure
+  >
+> = {
   body: newLocation,
 };
 
@@ -76,12 +85,11 @@ describe("Given a renameImages middleware", () => {
   const expectedFileName = `image-${timestamp}.jpg`;
 
   beforeEach(async () => {
-    await fs.mkdir("uploads");
     await fs.writeFile(getUploadPath("filehash"), Buffer.from(""));
   });
 
-  afterEach(async () => {
-    await fs.rm("uploads", { recursive: true, force: true });
+  afterAll(async () => {
+    await cleanUploads();
   });
 
   describe("When it receives a CustomRequest with an image file 'image.jpg'", () => {
@@ -103,7 +111,7 @@ describe("Given a renameImages middleware", () => {
   describe("When it receives a CustomRequest with an image file 'image.jpg' and fs rejects", () => {
     test("Then it should invoked next with the thrown error", async () => {
       const file: Partial<Express.Multer.File> = {
-        filename: "filehash",
+        filename: "image.jpg",
         originalname: "image.jpg",
         path: getUploadPath("filehash"),
       };
@@ -116,6 +124,45 @@ describe("Given a renameImages middleware", () => {
       await renameImages(req as CustomRequest, null, next);
 
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a resizeImages middleware", () => {
+  beforeEach(async () => {
+    const testImageLocation = path.join("src", "mocks", "mockImage.jpg");
+    await fs.copyFile(testImageLocation, getUploadPath("image.jpg"));
+  });
+
+  afterAll(async () => {
+    await cleanUploads();
+  });
+
+  describe("When it receives a CustomRequest with an image file", () => {
+    const smallFileName = "small-image.webp";
+    const mainFileName = "image.webp";
+
+    test("Then it should create a copy of the file and resize the images", async () => {
+      await resizeImages(req as CustomRequest, null, next);
+
+      const mainFile = await fs.open(getUploadPath(mainFileName));
+      const smallFile = await fs.open(getUploadPath(smallFileName));
+
+      expect(mainFile).not.toBe(undefined);
+      expect(smallFile).not.toBe(undefined);
+    });
+
+    test("And then it should add the files to the body of the request and invoke next", async () => {
+      await resizeImages(req as CustomRequest, null, next);
+
+      expect(req.body.images).toHaveProperty(
+        "image",
+        getUploadPath(mainFileName)
+      );
+      expect(req.body.images).toHaveProperty(
+        "small",
+        getUploadPath(smallFileName)
+      );
     });
   });
 });
