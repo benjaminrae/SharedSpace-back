@@ -1,8 +1,8 @@
 import fs from "fs/promises";
-// Import { MongoMemoryServer } from "mongodb-memory-server";
-// import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
 import request from "supertest";
-// Import connectDatabase from "../../../database/connectDatabase";
+import connectDatabase from "../../../database/connectDatabase";
 import { getRandomLocation } from "../../../factories/locationsFactory";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
@@ -18,28 +18,19 @@ const {
 
 const newLocation = getRandomLocation();
 
-// Let server: MongoMemoryServer;
-// const { log } = console;
+let server: MongoMemoryServer;
+const { log } = console;
 
-// beforeAll(async () => {
-//   try {
-//     server = await MongoMemoryServer.create();
-//     log(server.getUri());
-//     await connectDatabase(server.getUri());
-//   } catch (error: unknown) {
-//     log("beforeAll", error);
-//   }
-// });
+beforeAll(async () => {
+  server = await MongoMemoryServer.create();
+  log(server.getUri());
+  await connectDatabase(server.getUri());
+});
 
-// afterAll(async () => {
-//   try {
-//     log(server);
-//     await server.stop();
-//     await mongoose.connection.close();
-//   } catch (error: unknown) {
-//     log("afterAll", error);
-//   }
-// });
+afterAll(async () => {
+  await server.stop();
+  await mongoose.connection.close();
+});
 
 describe("Given a POST /locations/add endpoint", () => {
   describe(`When it receives a request with ${newLocation.name}, ${newLocation.location} and an image`, () => {
