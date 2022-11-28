@@ -24,6 +24,7 @@ const { log } = console;
 beforeAll(async () => {
   try {
     server = await MongoMemoryServer.create();
+    log(server.getUri());
     await connectDatabase(server.getUri());
   } catch (error: unknown) {
     log("beforeAll", error);
@@ -32,6 +33,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   try {
+    log(server);
     await server.stop();
     await mongoose.connection.close();
   } catch (error: unknown) {
