@@ -25,6 +25,9 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           TOKEN_EXPIRY: ${{ secrets.TOKEN_EXPIRY }}
           SALT_LENGTH: ${{ secrets.SALT_LENGTH }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_BUCKET: ${{ secrets.SUPABASE_BUCKET }}
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

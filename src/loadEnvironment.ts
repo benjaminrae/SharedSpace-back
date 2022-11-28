@@ -11,6 +11,9 @@ interface Environment {
   jwtSecret: string;
   tokenExpiry: string;
   saltLength: number;
+  supabaseUrl: string;
+  supabaseKey: string;
+  supabaseBucket: string;
 }
 
 const {
@@ -22,6 +25,9 @@ const {
   JWT_SECRET: jwtSecret,
   TOKEN_EXPIRY: tokenExpiry,
   SALT_LENGTH: saltLength,
+  SUPABASE_URL: supabaseUrl,
+  SUPABASE_KEY: supabaseKey,
+  SUPABASE_BUCKET: supabaseBucket,
 } = process.env;
 
 export const environment: Environment = {
@@ -33,4 +39,7 @@ export const environment: Environment = {
   jwtSecret,
   tokenExpiry,
   saltLength: +saltLength,
+  supabaseBucket,
+  supabaseKey,
+  supabaseUrl,
 };
