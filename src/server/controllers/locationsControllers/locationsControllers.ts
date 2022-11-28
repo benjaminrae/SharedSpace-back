@@ -1,5 +1,5 @@
 import type { Response, NextFunction } from "express";
-import Location from "../../../database/models/Location";
+import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
 import type { LocationStructure } from "./types";
 

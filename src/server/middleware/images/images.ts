@@ -1,11 +1,11 @@
 import fs from "fs/promises";
 import sharp from "sharp";
+import path from "path";
 import type { Response, NextFunction } from "express";
 import type { CustomRequest } from "../auth/types";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
-import getUploadPath from "../../utils/getUploadPath/getUploadPath";
-import { bucket } from "../../utils/supabaseConfig";
-import path from "path";
+import getUploadPath from "../../utils/getUploadPath/getUploadPath.js";
+import { bucket } from "../../utils/supabaseConfig.js";
 
 export const backupImages = async (
   req: CustomRequest<

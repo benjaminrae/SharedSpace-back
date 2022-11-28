@@ -1,9 +1,15 @@
 import { Router } from "express";
-import { addLocation } from "../../controllers/locationsControllers/locationsControllers";
 import multer from "multer";
-import paths from "../paths";
-import fileFilter from "../../utils/fileFilter/fileFilter";
-import { environment } from "../../../loadEnvironment";
+import { addLocation } from "../../controllers/locationsControllers/locationsControllers.js";
+import paths from "../paths.js";
+import fileFilter from "../../utils/fileFilter/fileFilter.js";
+import { environment } from "../../../loadEnvironment.js";
+import auth from "../../middleware/auth/auth.js";
+import {
+  backupImages,
+  renameImages,
+  resizeImages,
+} from "../../middleware/images/images.js";
 
 const {
   partialPaths: { addPath },
@@ -22,6 +28,14 @@ const upload = multer({
 // eslint-disable-next-line new-cap
 const locationsRouter = Router();
 
-locationsRouter.post(addPath, upload.single("image"), addLocation);
+locationsRouter.post(
+  addPath,
+  auth,
+  upload.single("image"),
+  renameImages,
+  resizeImages,
+  backupImages,
+  addLocation
+);
 
 export default locationsRouter;
