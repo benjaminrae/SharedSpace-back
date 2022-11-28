@@ -7,7 +7,6 @@ import { getRandomLocation } from "../../../factories/locationsFactory";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
-import cleanUploads from "../../utils/files/cleanUploads";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import paths from "../paths";
 
@@ -35,8 +34,6 @@ afterAll(async () => {
   try {
     await server.stop();
     await mongoose.connection.close();
-
-    await cleanUploads();
   } catch (error: unknown) {
     log("afterAll", error);
   }
