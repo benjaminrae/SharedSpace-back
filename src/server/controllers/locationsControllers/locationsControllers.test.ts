@@ -1,4 +1,5 @@
 import type { Response, NextFunction } from "express";
+import fs from "fs/promises";
 import Location from "../../../database/models/Location";
 import { getRandomLocation } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../../middleware/auth/types";
@@ -9,7 +10,10 @@ const {
   successCodes: { createdCode },
 } = httpStatusCodes;
 
-const req: Partial<CustomRequest> = {};
+const req: Partial<CustomRequest> = {
+  protocol: "http",
+  get: jest.fn().mockReturnValue("localhost:4000"),
+};
 
 const res: Partial<Response> = {
   status: jest.fn().mockReturnThis(),
@@ -27,11 +31,9 @@ describe("Given an addLocation controller", () => {
 
   describe(`When it receives a CustomRequest with userId ${newLocation.owner.toString()} and location ${
     newLocation.name
-  } in the body`, () => {
-    test("Then it should respod with status 201 and the new location without the backup images", async () => {
+  } in the body and the files are stored locally`, () => {
+    test("Then it should respond with status 201 and the new location without the backup images", async () => {
       const expectedResponse = { ...newLocation };
-      delete expectedResponse.images.backup;
-      delete expectedResponse.images.backupSmall;
 
       req.userId = newLocation.owner.toString();
       req.body = newLocation;
@@ -42,11 +44,25 @@ describe("Given an addLocation controller", () => {
         toJSON: jest.fn().mockReturnValueOnce(newLocation),
       });
 
+      fs.open = jest
+        .fn()
+        .mockResolvedValue({ close: jest.fn().mockResolvedValue(true) });
+
       await addLocation(req as CustomRequest, res as Response, next);
 
       expect(res.status).toHaveBeenCalledWith(createdCode);
       expect(res.json).toHaveBeenCalledWith({
-        location: expectedResponse,
+        location: {
+          ...expectedResponse,
+          images: {
+            image: `${req.protocol}://${req.get("host")}/${
+              expectedResponse.images.image
+            }`,
+            small: `${req.protocol}://${req.get("host")}/${
+              expectedResponse.images.small
+            }`,
+          },
+        },
       });
     });
   });

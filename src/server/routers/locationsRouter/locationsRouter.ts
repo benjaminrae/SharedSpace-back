@@ -15,12 +15,12 @@ const {
   partialPaths: { addPath },
 } = paths;
 
-const { maxFileSize } = environment;
+const { maxUploadSize } = environment;
 
 const upload = multer({
   dest: "uploads",
   limits: {
-    fileSize: maxFileSize,
+    fileSize: maxUploadSize,
   },
   fileFilter,
 });

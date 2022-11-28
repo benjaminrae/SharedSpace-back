@@ -25,8 +25,8 @@ export const backupImages = async (
     const mainImageName = image;
     const smallImageName = small;
 
-    const mainImageContents = await fs.readFile(getUploadPath(mainImageName));
-    const smallImageContents = await fs.readFile(getUploadPath(smallImageName));
+    const mainImageContents = await fs.readFile(mainImageName);
+    const smallImageContents = await fs.readFile(smallImageName);
 
     await bucket.upload(mainImageName, mainImageContents);
     await bucket.upload(smallImageName, smallImageContents);
@@ -101,8 +101,7 @@ export const resizeImages = async (
       .toFormat("webp")
       .toFile(newSmallFile);
 
-    req.body.images.image = newMainFile;
-    req.body.images.small = newSmallFile;
+    req.body.images = { image: newMainFile, small: newSmallFile };
 
     next();
   } catch (error: unknown) {
