@@ -30,6 +30,14 @@ const timestamp = Date.now();
 jest.useFakeTimers();
 jest.setSystemTime(timestamp);
 
+beforeAll(async () => {
+  try {
+    await fs.access(uploadsPath);
+  } catch {
+    await fs.mkdir(uploadsPath);
+  }
+});
+
 beforeEach(() => {
   jest.clearAllMocks();
 });
@@ -90,12 +98,6 @@ describe("Given a renameImages middleware", () => {
   const expectedFileName = `image-${timestamp}.jpg`;
 
   beforeEach(async () => {
-    try {
-      await fs.access(uploadsPath);
-    } catch {
-      await fs.mkdir(uploadsPath);
-    }
-
     await fs.writeFile(getUploadPath("filehash"), Buffer.from(""));
   });
 
