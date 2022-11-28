@@ -5,7 +5,6 @@ import { backupImages, renameImages, resizeImages } from "./images";
 import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import path from "path";
-import cleanUploads from "../../utils/files/cleanUploads";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 
 const uploadsPath = "uploads";
@@ -101,10 +100,6 @@ describe("Given a renameImages middleware", () => {
     await fs.writeFile(getUploadPath("filehash"), Buffer.from(""));
   });
 
-  afterAll(async () => {
-    await cleanUploads();
-  });
-
   describe("When it receives a CustomRequest with an image file 'image.jpg'", () => {
     test("Then it should rename the file by adding a time stamp to the original name and invoke next", async () => {
       const file: Partial<Express.Multer.File> = {
@@ -145,10 +140,6 @@ describe("Given a resizeImages middleware", () => {
   beforeEach(async () => {
     const testImageLocation = path.join("src", "mocks", "mockImage.jpg");
     await fs.copyFile(testImageLocation, getUploadPath("image.jpg"));
-  });
-
-  afterAll(async () => {
-    await cleanUploads();
   });
 
   describe("When it receives a CustomRequest with an image file", () => {
