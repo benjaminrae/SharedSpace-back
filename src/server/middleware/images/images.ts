@@ -61,6 +61,9 @@ export const renameImages = async (
 
   try {
     await fs.rename(getUploadPath(req.file.filename), newFilePath);
+
+    req.file.filename = newFileName;
+    next();
   } catch (error: unknown) {
     next(error);
   }
