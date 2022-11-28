@@ -28,3 +28,4 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           SUPABASE_BUCKET: ${{ secrets.SUPABASE_BUCKET }}
           UPLOAD_PATH: ${{ secrets.UPLOAD_PATH }}
+          MAX_FILE_SIZE: ${{ secrets.MAX_FILE_SIZE }}

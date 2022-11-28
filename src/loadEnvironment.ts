@@ -15,6 +15,7 @@ interface Environment {
   supabaseKey: string;
   supabaseBucket: string;
   uploadPath: string;
+  maxFileSize: number;
 }
 
 const {
@@ -30,6 +31,7 @@ const {
   SUPABASE_KEY: supabaseKey,
   SUPABASE_BUCKET: supabaseBucket,
   UPLOAD_PATH: uploadPath,
+  MAX_FILE_SIZE: maxFileSize,
 } = process.env;
 
 export const environment: Environment = {
@@ -45,4 +47,5 @@ export const environment: Environment = {
   supabaseKey,
   supabaseUrl,
   uploadPath,
+  maxFileSize: +maxFileSize,
 };

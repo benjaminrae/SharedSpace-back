@@ -3,15 +3,18 @@ import { addLocation } from "../../controllers/locationsControllers/locationsCon
 import multer from "multer";
 import paths from "../paths";
 import fileFilter from "../../utils/fileFilter/fileFilter";
+import { environment } from "../../../loadEnvironment";
 
 const {
   partialPaths: { addPath },
 } = paths;
 
+const { maxFileSize } = environment;
+
 const upload = multer({
   dest: "uploads",
   limits: {
-    fileSize: 8000000,
+    fileSize: maxFileSize,
   },
   fileFilter,
 });
