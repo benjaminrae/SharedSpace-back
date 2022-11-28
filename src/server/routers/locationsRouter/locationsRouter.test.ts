@@ -7,6 +7,7 @@ import { getRandomLocation } from "../../../factories/locationsFactory";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
+import cleanUploads from "../../utils/files/cleanUploads";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import paths from "../paths";
 
@@ -28,6 +29,8 @@ beforeAll(async () => {
 afterAll(async () => {
   await server.stop();
   await mongoose.disconnect();
+
+  await cleanUploads();
 });
 
 describe("Given a POST /locations/add endpoint", () => {
