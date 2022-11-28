@@ -16,9 +16,6 @@ describe("Given the function cleanUploads", () => {
   describe("When it is invoked and there are three files in the uploads folder", () => {
     test("Then it should empty the uploads folder", async () => {
       const uploadsPath = "uploads";
-      const uploadsBefore = await fs.readdir(uploadsPath);
-
-      expect(uploadsBefore.length).toBe(3);
 
       await cleanUploads();
 
