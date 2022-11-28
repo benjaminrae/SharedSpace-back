@@ -6,6 +6,7 @@ import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import path from "path";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
+import doesFileExist from "../../utils/files/doesFileExist";
 
 const uploadsPath = "uploads";
 
@@ -149,11 +150,11 @@ describe("Given a resizeImages middleware", () => {
     test("Then it should create a copy of the file and resize the images", async () => {
       await resizeImages(req as CustomRequest, null, next);
 
-      const mainFile = await fs.open(getUploadPath(mainFileName));
-      const smallFile = await fs.open(getUploadPath(smallFileName));
+      const mainFile = await doesFileExist(getUploadPath(mainFileName));
+      const smallFile = await doesFileExist(getUploadPath(smallFileName));
 
-      expect(mainFile).not.toBe(undefined);
-      expect(smallFile).not.toBe(undefined);
+      expect(mainFile).toBe(true);
+      expect(smallFile).toBe(true);
     });
 
     test("And then it should add the files to the body of the request and invoke next", async () => {
