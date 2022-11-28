@@ -3,6 +3,8 @@ const paths = {
     usersPath: "/users",
     loginPath: "/login",
     registerPath: "/register",
+    locationsPath: "/locations",
+    addPath: "/add",
   },
 
   get usersLoginPath() {
@@ -11,6 +13,10 @@ const paths = {
 
   get usersRegisterPath() {
     return `${this.partialPaths.usersPath}${this.partialPaths.registerPath}`;
+  },
+
+  get locationsAddPath() {
+    return `${this.partialPaths.locationsPath}${this.partialPaths.addPath}`;
   },
 };
 

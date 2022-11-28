@@ -11,6 +11,11 @@ interface Environment {
   jwtSecret: string;
   tokenExpiry: string;
   saltLength: number;
+  supabaseUrl: string;
+  supabaseKey: string;
+  supabaseBucket: string;
+  uploadPath: string;
+  maxFileSize: number;
 }
 
 const {
@@ -22,6 +27,11 @@ const {
   JWT_SECRET: jwtSecret,
   TOKEN_EXPIRY: tokenExpiry,
   SALT_LENGTH: saltLength,
+  SUPABASE_URL: supabaseUrl,
+  SUPABASE_KEY: supabaseKey,
+  SUPABASE_BUCKET: supabaseBucket,
+  UPLOAD_PATH: uploadPath,
+  MAX_FILE_SIZE: maxFileSize,
 } = process.env;
 
 export const environment: Environment = {
@@ -33,4 +43,9 @@ export const environment: Environment = {
   jwtSecret,
   tokenExpiry,
   saltLength: +saltLength,
+  supabaseBucket,
+  supabaseKey,
+  supabaseUrl,
+  uploadPath,
+  maxFileSize: +maxFileSize,
 };

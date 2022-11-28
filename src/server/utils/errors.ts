@@ -2,7 +2,7 @@ import CustomError from "../../CustomError/CustomError.js";
 import httpStatusCodes from "./httpStatusCodes.js";
 
 const {
-  clientErrors: { unauthorizedCode, conflictsErrorCode },
+  clientErrors: { unauthorizedCode, conflictsErrorCode, badRequestCode },
 } = httpStatusCodes;
 
 const incorrectCredentialsMessage = "Incorrect username or password";
@@ -40,5 +40,13 @@ export const authErrors = {
     "Missing Bearer in token",
     401,
     "Bad token"
+  ),
+};
+
+export const imageErrors = {
+  imageFormatError: new CustomError(
+    "Wrong image format",
+    badRequestCode,
+    "Wrong image format. Accepeted formats: png, jpg, jpeg, avif and webp"
   ),
 };
