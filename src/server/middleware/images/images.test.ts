@@ -9,6 +9,8 @@ import path from "path";
 import cleanUploads from "../../utils/cleanUploads/cleanUploads";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 
+const uploadsPath = "uploads";
+
 const newLocation = getRandomLocation();
 delete newLocation.images.backup;
 delete newLocation.images.backupSmall;
@@ -85,6 +87,12 @@ describe("Given a renameImages middleware", () => {
   const expectedFileName = `image-${timestamp}.jpg`;
 
   beforeEach(async () => {
+    try {
+      await fs.access(uploadsPath);
+    } catch {
+      await fs.mkdir(uploadsPath);
+    }
+
     await fs.writeFile(getUploadPath("filehash"), Buffer.from(""));
   });
 
