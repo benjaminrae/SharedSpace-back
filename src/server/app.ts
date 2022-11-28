@@ -17,6 +17,7 @@ app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 app.disable("x-powered-by");
+app.use("/uploads", express.static("uploads"));
 
 app.use(usersPath, usersRouter);
 
