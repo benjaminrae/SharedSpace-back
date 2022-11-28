@@ -1,4 +1,3 @@
-import type { Express } from "express";
 import type { CustomRequest } from "../../middleware/auth/types";
 import { imageErrors } from "../errors";
 import httpStatusCodes from "../httpStatusCodes";
@@ -46,6 +45,19 @@ describe("Given the function fileFilter", () => {
         statusProperty,
         badRequestCode
       );
+    });
+  });
+
+  describe("When it receives a CustomRequest a file 'image.png' and a file filter callback", () => {
+    test("Then it should invoke the callback with null and true", () => {
+      const file: Partial<Express.Multer.File> = {
+        mimetype: "png",
+        originalname: "image.png",
+      };
+
+      fileFilter(req as CustomRequest, file as Express.Multer.File, callback);
+
+      expect(callback).toHaveBeenCalledWith(null, true);
     });
   });
 });
