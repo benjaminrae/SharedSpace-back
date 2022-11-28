@@ -1,5 +1,4 @@
 import fs from "fs/promises";
-import type { NextFunction } from "express";
 import { getRandomLocation } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../auth/types";
 import { backupImages, renameImages, resizeImages } from "./images";
@@ -25,11 +24,15 @@ const req: Partial<
   body: newLocation,
 };
 
-const next: NextFunction = jest.fn();
+const next = jest.fn();
 
 const timestamp = Date.now();
 jest.useFakeTimers();
 jest.setSystemTime(timestamp);
+
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 describe("Given a backupImages middleware", () => {
   const mainFile = Buffer.from("main");
@@ -171,6 +174,23 @@ describe("Given a resizeImages middleware", () => {
         "small",
         getUploadPath(smallFileName)
       );
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe("When it receives a CustomRequest with an unreadable file", () => {
+    const unreadableImage = "unreadable.jpg";
+
+    beforeEach(async () => {
+      await fs.writeFile(getUploadPath(unreadableImage), Buffer.from(""));
+    });
+
+    test("Then it should call next", async () => {
+      req.file.filename = getUploadPath(unreadableImage);
+
+      await resizeImages(req as CustomRequest, null, next);
+
+      expect(next).toHaveBeenCalled();
     });
   });
 });
