@@ -20,17 +20,26 @@ const {
 const newLocation = getRandomLocation();
 
 let server: MongoMemoryServer;
+const { log } = console;
 
 beforeAll(async () => {
-  server = await MongoMemoryServer.create();
-  await connectDatabase(server.getUri());
+  try {
+    server = await MongoMemoryServer.create();
+    await connectDatabase(server.getUri());
+  } catch (error: unknown) {
+    log("beforeAll", error);
+  }
 });
 
 afterAll(async () => {
-  await server.stop();
-  await mongoose.connection.close();
+  try {
+    await server.stop();
+    await mongoose.connection.close();
 
-  await cleanUploads();
+    await cleanUploads();
+  } catch (error: unknown) {
+    log("afterAll", error);
+  }
 });
 
 describe("Given a POST /locations/add endpoint", () => {
