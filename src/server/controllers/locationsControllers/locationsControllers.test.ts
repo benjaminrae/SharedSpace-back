@@ -69,6 +69,38 @@ describe("Given an addLocation controller", () => {
 
   describe(`When it receives a CustomRequest with userId ${newLocation.owner.toString()} and location ${
     newLocation.name
+  } in the body and the files are not stored locally`, () => {
+    test("Then it should respond with status 201 and the new location with the backup images", async () => {
+      const expectedResponse = { ...newLocation };
+
+      req.userId = newLocation.owner.toString();
+      req.body = newLocation;
+
+      Location.create = jest.fn().mockReturnValueOnce({
+        ...newLocation,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        toJSON: jest.fn().mockReturnValueOnce(newLocation),
+      });
+
+      fs.open = jest.fn().mockRejectedValue(false);
+
+      await addLocation(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(createdCode);
+      expect(res.json).toHaveBeenCalledWith({
+        location: {
+          ...expectedResponse,
+          images: {
+            image: expectedResponse.images.backup,
+            small: expectedResponse.images.backupSmall,
+          },
+        },
+      });
+    });
+  });
+
+  describe(`When it receives a CustomRequest with userId ${newLocation.owner.toString()} and location ${
+    newLocation.name
   } in the body but document creation rejects`, () => {
     test("Then next should be called with the thrown error", async () => {
       req.userId = newLocation.owner.toString();
