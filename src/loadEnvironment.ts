@@ -14,6 +14,7 @@ interface Environment {
   supabaseUrl: string;
   supabaseKey: string;
   supabaseBucket: string;
+  uploadPath: string;
 }
 
 const {
@@ -28,6 +29,7 @@ const {
   SUPABASE_URL: supabaseUrl,
   SUPABASE_KEY: supabaseKey,
   SUPABASE_BUCKET: supabaseBucket,
+  UPLOAD_PATH: uploadPath,
 } = process.env;
 
 export const environment: Environment = {
@@ -42,4 +44,5 @@ export const environment: Environment = {
   supabaseBucket,
   supabaseKey,
   supabaseUrl,
+  uploadPath,
 };

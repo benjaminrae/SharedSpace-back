@@ -4,7 +4,7 @@ import type { Response, NextFunction } from "express";
 import type { CustomRequest } from "../auth/types";
 import { environment } from "../../../loadEnvironment";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
-import getUploadPath from "../../utils/getUploadPath";
+import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 
 const { supabaseBucket, supabaseKey, supabaseUrl } = environment;
 
