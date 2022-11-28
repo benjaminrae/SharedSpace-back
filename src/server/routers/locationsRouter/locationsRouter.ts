@@ -2,7 +2,7 @@ import { Router } from "express";
 import { addLocation } from "../../controllers/locationsControllers/locationsControllers";
 import multer from "multer";
 import paths from "../paths";
-import fileFilter from "../../utils/fileFilter";
+import fileFilter from "../../utils/fileFilter/fileFilter";
 
 const {
   partialPaths: { addPath },
