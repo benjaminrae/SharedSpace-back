@@ -28,7 +28,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await server.stop();
-  await mongoose.disconnect();
+  await mongoose.connection.close();
 
   await cleanUploads();
 });

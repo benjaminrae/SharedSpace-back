@@ -9,7 +9,7 @@
     "build:dev": "tsc -w",
     "start": "node .",
     "start:dev": "nodemon . -q",
-    "test": "jest",
+    "test": "jest --runInBand",
     "test:dev": "jest --watchAll",
     "test:coverage": "jest --coverage --watchAll=false",
     "prepare": "husky install"
