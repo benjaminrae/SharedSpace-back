@@ -9,9 +9,11 @@
     "build:dev": "tsc -w",
     "start": "node .",
     "start:dev": "nodemon . -q",
-    "test": "jest --runInBand",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit": "jest --config=jest.config.cjs",
+    "test:integration": "jest --config=jest.integration.config.cjs",
     "test:dev": "jest --watchAll",
-    "test:coverage": "jest --coverage --watchAll=false",
+    "test:coverage": "npm run test:unit -- --coverage --watchAll=false && npm run test:integration -- --coverage --watchAll=false",
     "prepare": "husky install"
   },
   "keywords": [],

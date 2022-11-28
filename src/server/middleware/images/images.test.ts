@@ -8,8 +8,6 @@ import path from "path";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 import doesFileExist from "../../utils/files/doesFileExist";
 
-const uploadsPath = "uploads";
-
 const newLocation = getRandomLocation();
 delete newLocation.images.backup;
 delete newLocation.images.backupSmall;
@@ -29,14 +27,6 @@ const next = jest.fn();
 const timestamp = Date.now();
 jest.useFakeTimers();
 jest.setSystemTime(timestamp);
-
-beforeAll(async () => {
-  try {
-    await fs.access(uploadsPath);
-  } catch {
-    await fs.mkdir(uploadsPath);
-  }
-});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -139,7 +129,7 @@ describe("Given a renameImages middleware", () => {
 
 describe("Given a resizeImages middleware", () => {
   beforeEach(async () => {
-    const testImageLocation = path.join("src", "mocks", "mockImage.jpg");
+    const testImageLocation = path.join(getUploadPath("mockImage.jpg"));
     await fs.copyFile(testImageLocation, getUploadPath("image.jpg"));
   });
 

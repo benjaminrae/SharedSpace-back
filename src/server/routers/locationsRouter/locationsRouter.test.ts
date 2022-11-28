@@ -7,6 +7,7 @@ import { getRandomLocation } from "../../../factories/locationsFactory";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
+import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import paths from "../paths";
 
@@ -22,22 +23,22 @@ let server: MongoMemoryServer;
 const { log } = console;
 
 beforeAll(async () => {
-  server = await MongoMemoryServer.create();
+  server = await MongoMemoryServer.create({});
   log(server.getUri());
   await connectDatabase(server.getUri());
 });
 
 afterAll(async () => {
-  await server.stop();
   await mongoose.connection.close();
+  await server.stop();
 });
 
 describe("Given a POST /locations/add endpoint", () => {
   describe(`When it receives a request with ${newLocation.name}, ${newLocation.location} and an image`, () => {
-    test.skip("Then it should respond with status 201 and the created location in the body with a normal image and a small image", async () => {
+    test("Then it should respond with status 201 and the created location in the body with a normal image and a small image", async () => {
       const timeStamp = Date.now();
       Date.now = jest.fn().mockReturnValue(timeStamp);
-      const fileData = await fs.readFile("src/mocks/mockImage.jpg");
+      const fileData = await fs.readFile(getUploadPath("mockImage.jpg"));
       const expectedFileName = `mockImage-${timeStamp}.webp`;
       const expectedSmallFileName = `small-mockImage-${timeStamp}.webp`;
 
