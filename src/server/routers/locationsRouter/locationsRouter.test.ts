@@ -20,11 +20,9 @@ const {
 const newLocation = getRandomLocation();
 
 let server: MongoMemoryServer;
-const { log } = console;
 
 beforeAll(async () => {
   server = await MongoMemoryServer.create({});
-  log(server.getUri());
   await connectDatabase(server.getUri());
 });
 
