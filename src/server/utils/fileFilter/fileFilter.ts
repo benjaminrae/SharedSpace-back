@@ -1,6 +1,6 @@
 import type multer from "multer";
 import type { CustomRequest } from "../../middleware/auth/types";
-import { imageErrors } from "../errors";
+import { imageErrors } from "../errors.js";
 
 const fileFilter = (
   req: CustomRequest,

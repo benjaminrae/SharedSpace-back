@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
 import type { Response, NextFunction } from "express";
 import type { CustomTokenPayload } from "../../controllers/userControllers/types";
-import { authErrors } from "../../utils/errors";
+import { authErrors } from "../../utils/errors.js";
 import type { CustomRequest } from "./types";
-import { environment } from "../../../loadEnvironment";
+import { environment } from "../../../loadEnvironment.js";
 
 const { jwtSecret } = environment;
 

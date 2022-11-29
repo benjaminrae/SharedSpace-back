@@ -5,10 +5,8 @@ import { backupImages, renameImages, resizeImages } from "./images";
 import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import path from "path";
-import cleanUploads from "../../utils/cleanUploads/cleanUploads";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
-
-const uploadsPath = "uploads";
+import doesFileExist from "../../utils/files/doesFileExist";
 
 const newLocation = getRandomLocation();
 delete newLocation.images.backup;
@@ -90,17 +88,7 @@ describe("Given a renameImages middleware", () => {
   const expectedFileName = `image-${timestamp}.jpg`;
 
   beforeEach(async () => {
-    try {
-      await fs.access(uploadsPath);
-    } catch {
-      await fs.mkdir(uploadsPath);
-    }
-
     await fs.writeFile(getUploadPath("filehash"), Buffer.from(""));
-  });
-
-  afterAll(async () => {
-    await cleanUploads();
   });
 
   describe("When it receives a CustomRequest with an image file 'image.jpg'", () => {
@@ -141,12 +129,8 @@ describe("Given a renameImages middleware", () => {
 
 describe("Given a resizeImages middleware", () => {
   beforeEach(async () => {
-    const testImageLocation = path.join("src", "mocks", "mockImage.jpg");
+    const testImageLocation = path.join(getUploadPath("mockImage.jpg"));
     await fs.copyFile(testImageLocation, getUploadPath("image.jpg"));
-  });
-
-  afterAll(async () => {
-    await cleanUploads();
   });
 
   describe("When it receives a CustomRequest with an image file", () => {
@@ -156,11 +140,11 @@ describe("Given a resizeImages middleware", () => {
     test("Then it should create a copy of the file and resize the images", async () => {
       await resizeImages(req as CustomRequest, null, next);
 
-      const mainFile = await fs.open(getUploadPath(mainFileName));
-      const smallFile = await fs.open(getUploadPath(smallFileName));
+      const mainFile = await doesFileExist(getUploadPath(mainFileName));
+      const smallFile = await doesFileExist(getUploadPath(smallFileName));
 
-      expect(mainFile).not.toBe(undefined);
-      expect(smallFile).not.toBe(undefined);
+      expect(mainFile).toBe(true);
+      expect(smallFile).toBe(true);
     });
 
     test("And then it should add the files to the body of the request and invoke next", async () => {

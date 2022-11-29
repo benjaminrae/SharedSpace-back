@@ -1,4 +1,4 @@
-import { environment } from "../../../loadEnvironment";
+import { environment } from "../../../loadEnvironment.js";
 
 const { uploadPath } = environment;
 import path from "path";
