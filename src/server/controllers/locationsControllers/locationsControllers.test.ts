@@ -1,13 +1,16 @@
-import type { Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import fs from "fs/promises";
 import Location from "../../../database/models/Location";
-import { getRandomLocation } from "../../../factories/locationsFactory";
+import {
+  getRandomLocation,
+  getRandomLocations,
+} from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../../middleware/auth/types";
 import httpStatusCodes from "../../utils/httpStatusCodes";
-import { addLocation } from "./locationsControllers";
+import { addLocation, getLocations } from "./locationsControllers";
 
 const {
-  successCodes: { createdCode },
+  successCodes: { createdCode, okCode },
 } = httpStatusCodes;
 
 const req: Partial<CustomRequest> = {
@@ -110,6 +113,33 @@ describe("Given an addLocation controller", () => {
       Location.create = jest.fn().mockRejectedValue(error);
 
       await addLocation(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a getLocations controller", () => {
+  describe("When it receives a req and a response and there are 3 locations in the database", () => {
+    test("Then it should invoked response's status method with 200 and json with a list with the 3 locations", async () => {
+      const locations = getRandomLocations(3);
+
+      Location.find = jest.fn().mockResolvedValue(locations);
+
+      await getLocations(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({ locations });
+    });
+  });
+
+  describe("When it receives a request and a next function and the database query fails", () => {
+    test("Then it should call next with the thrown error", async () => {
+      const error = new Error("");
+
+      Location.find = jest.fn().mockRejectedValueOnce(error);
+
+      await getLocations(req as Request, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(error);
     });

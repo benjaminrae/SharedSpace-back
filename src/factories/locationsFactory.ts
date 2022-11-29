@@ -34,3 +34,6 @@ const locationFactory = Factory.define<LocationStructure>(() => ({
 }));
 
 export const getRandomLocation = () => locationFactory.build();
+
+export const getRandomLocations = (number: number) =>
+  locationFactory.buildList(number);
