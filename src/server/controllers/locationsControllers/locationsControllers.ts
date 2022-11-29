@@ -1,4 +1,4 @@
-import type { Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
 import doesFileExist from "../../utils/files/doesFileExist.js";
@@ -39,6 +39,20 @@ export const addLocation = async (
         },
       },
     });
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+export const getLocations = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const locations = await Location.find({});
+
+    res.status(200).json({ locations });
   } catch (error: unknown) {
     next(error);
   }
