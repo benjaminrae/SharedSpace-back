@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import corsOptions from "./cors/corsOptions.js";
 import { generalError, unknownEndpoint } from "./middleware/errors/errors.js";
+import { serveFallbackImage } from "./middleware/images/images.js";
 import locationsRouter from "./routers/locationsRouter/locationsRouter.js";
 import paths from "./routers/paths.js";
 import usersRouter from "./routers/usersRouter/usersRouter.js";
@@ -17,7 +18,7 @@ app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 app.disable("x-powered-by");
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"), serveFallbackImage);
 
 app.use(usersPath, usersRouter);
 

@@ -1,12 +1,18 @@
 import fs from "fs/promises";
 import { getRandomLocation } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../auth/types";
-import { backupImages, renameImages, resizeImages } from "./images";
+import {
+  backupImages,
+  renameImages,
+  resizeImages,
+  serveFallbackImage,
+} from "./images";
 import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import path from "path";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 import doesFileExist from "../../utils/files/doesFileExist";
+import type { Response } from "express";
 
 const newLocation = getRandomLocation();
 delete newLocation.images.backup;
@@ -175,6 +181,36 @@ describe("Given a resizeImages middleware", () => {
       await resizeImages(req as CustomRequest, null, next);
 
       expect(next).toHaveBeenCalled();
+    });
+  });
+});
+
+describe("Given a serveFallbackImage middleware", () => {
+  const res: Partial<Response> = {
+    redirect: jest.fn(),
+  };
+
+  describe("When it receives a request with a path that doesn't start with /uploads", () => {
+    test("Then it should call next", () => {
+      req.originalUrl = "";
+
+      serveFallbackImage(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+  });
+
+  describe("When it receives a request with a path that starts with /uploads", () => {
+    test("Then it should invoked the response's redirect method with the supabase url", () => {
+      const requestUrl = "/uploads/image.jpg";
+      req.originalUrl = requestUrl;
+      const publicUrl = `www.supabase.com${requestUrl}`;
+
+      bucket.getPublicUrl = jest.fn().mockReturnValue({ data: { publicUrl } });
+
+      serveFallbackImage(req as CustomRequest, res as Response, next);
+
+      expect(res.redirect).toHaveBeenCalledWith(publicUrl);
     });
   });
 });

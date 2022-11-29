@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import sharp from "sharp";
 import path from "path";
-import type { Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import type { CustomRequest } from "../auth/types";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath.js";
@@ -107,4 +107,23 @@ export const resizeImages = async (
   } catch (error: unknown) {
     next(error);
   }
+};
+
+export const serveFallbackImage = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { originalUrl } = req;
+
+  if (!originalUrl.startsWith("/uploads")) {
+    next();
+    return;
+  }
+
+  const {
+    data: { publicUrl },
+  } = bucket.getPublicUrl(originalUrl);
+
+  res.redirect(publicUrl);
 };
