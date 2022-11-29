@@ -1,6 +1,9 @@
 import { Router } from "express";
 import multer from "multer";
-import { addLocation } from "../../controllers/locationsControllers/locationsControllers.js";
+import {
+  addLocation,
+  getLocations,
+} from "../../controllers/locationsControllers/locationsControllers.js";
 import paths from "../paths.js";
 import fileFilter from "../../utils/fileFilter/fileFilter.js";
 import { environment } from "../../../loadEnvironment.js";
@@ -27,6 +30,8 @@ const upload = multer({
 
 // eslint-disable-next-line new-cap
 const locationsRouter = Router();
+
+locationsRouter.get("", getLocations);
 
 locationsRouter.post(
   addPath,
