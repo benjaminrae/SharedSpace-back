@@ -109,7 +109,7 @@ export const resizeImages = async (
   }
 };
 
-export const serveFallbackImage = async (
+export const serveFallbackImage = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -118,6 +118,7 @@ export const serveFallbackImage = async (
 
   if (!originalUrl.startsWith("/uploads")) {
     next();
+    return;
   }
 
   const {
