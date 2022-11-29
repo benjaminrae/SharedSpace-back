@@ -3,7 +3,11 @@ import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
 import connectDatabase from "../../../database/connectDatabase";
-import { getRandomLocation } from "../../../factories/locationsFactory";
+import Location from "../../../database/models/Location";
+import {
+  getRandomLocation,
+  getRandomLocations,
+} from "../../../factories/locationsFactory";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
@@ -11,10 +15,13 @@ import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import paths from "../paths";
 
-const { locationsAddPath } = paths;
+const {
+  locationsAddPath,
+  partialPaths: { locationsPath },
+} = paths;
 
 const {
-  successCodes: { createdCode },
+  successCodes: { createdCode, okCode },
 } = httpStatusCodes;
 
 const newLocation = getRandomLocation();
@@ -32,6 +39,10 @@ afterAll(async () => {
 });
 
 describe("Given a POST /locations/add endpoint", () => {
+  afterEach(async () => {
+    await Location.deleteMany({});
+  });
+
   describe(`When it receives a request with ${newLocation.name}, ${newLocation.location} and an image`, () => {
     test("Then it should respond with status 201 and the created location in the body with a normal image and a small image", async () => {
       const timeStamp = Date.now();
@@ -62,6 +73,24 @@ describe("Given a POST /locations/add endpoint", () => {
 
       expect(image).toContain(expectedFileName);
       expect(small).toContain(expectedSmallFileName);
+    });
+  });
+});
+
+describe("Given a GET /locations endpoint", () => {
+  const locations = getRandomLocations(3);
+  beforeEach(async () => {
+    await Location.create(locations);
+  });
+
+  describe("When it recieves a request and there are 3 locations in the database", () => {
+    test("Then it should respond with those 3 locations", async () => {
+      const expectedLocations = 3;
+
+      const response: { body: { locations: LocationStructure[] } } =
+        await request(app).get(locationsPath).expect(okCode);
+
+      expect(response.body.locations).toHaveLength(expectedLocations);
     });
   });
 });
