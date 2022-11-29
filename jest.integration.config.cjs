@@ -11,4 +11,5 @@ module.exports = {
     "!src/database/connectDatabase.ts",
   ],
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
+  coverageDirectory: "coverage/integration",
 };

@@ -10,5 +10,5 @@
     "noImplicitAny": true /* Enable error reporting for expressions and declarations with an implied `any` type.. */,
     "noImplicitThis": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/setupTests.js"]
 }
