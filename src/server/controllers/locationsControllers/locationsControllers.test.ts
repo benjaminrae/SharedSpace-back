@@ -121,15 +121,63 @@ describe("Given an addLocation controller", () => {
 
 describe("Given a getLocations controller", () => {
   describe("When it receives a req and a response and there are 3 locations in the database", () => {
-    test("Then it should invoked response's status method with 200 and json with a list with the 3 locations", async () => {
-      const locations = getRandomLocations(3);
+    test("Then it should invoked response's status method with 200 and json with a list with the 3 locations, count 0, next null and previous null", async () => {
+      const total = 3;
+      const locations = getRandomLocations(total);
+      req.query = {};
 
-      Location.find = jest.fn().mockResolvedValue(locations);
+      Location.find = jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            exec: jest.fn().mockReturnValue(locations),
+          }),
+        }),
+      });
+
+      Location.countDocuments = jest.fn().mockResolvedValue(total);
 
       await getLocations(req as Request, res as Response, next);
 
       expect(res.status).toHaveBeenCalledWith(okCode);
-      expect(res.json).toHaveBeenCalledWith({ locations });
+      expect(res.json).toHaveBeenCalledWith({
+        count: total,
+        next: null,
+        previous: null,
+        locations,
+      });
+    });
+  });
+
+  describe("When it receives a request with query page=2 and there are 30 locations in the database", () => {
+    test("Then it should invoke response's method json with next a link with page=3 and previous a link with page=1", async () => {
+      req.query = { page: "2" };
+      req.protocol = "http";
+      req.url = "/locations";
+      const host = "sharedspace.com";
+      req.get = jest.fn().mockReturnValue(host);
+      const nextUrl = `${req.protocol}://${host}${req.url}?page=3&limit=10`;
+      const previous = `${req.protocol}://${host}${req.url}?page=1&limit=10`;
+      const total = 30;
+      const locations = getRandomLocations(total);
+
+      Location.find = jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            exec: jest.fn().mockReturnValue(locations),
+          }),
+        }),
+      });
+
+      Location.countDocuments = jest.fn().mockResolvedValue(total);
+
+      await getLocations(req as Request, res as Response, next);
+
+      expect(res.json).toHaveBeenCalledWith({
+        locations,
+        count: total,
+        next: nextUrl,
+        previous,
+      });
     });
   });
 
@@ -137,7 +185,13 @@ describe("Given a getLocations controller", () => {
     test("Then it should call next with the thrown error", async () => {
       const error = new Error("");
 
-      Location.find = jest.fn().mockRejectedValueOnce(error);
+      Location.find = jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            exec: jest.fn().mockRejectedValue(error),
+          }),
+        }),
+      });
 
       await getLocations(req as Request, res as Response, next);
 
