@@ -78,19 +78,33 @@ describe("Given a POST /locations/add endpoint", () => {
 });
 
 describe("Given a GET /locations endpoint", () => {
-  const locations = getRandomLocations(3);
+  const expectedLocations = 30;
+  const locations = getRandomLocations(expectedLocations);
   beforeEach(async () => {
     await Location.create(locations);
   });
 
-  describe("When it recieves a request and there are 3 locations in the database", () => {
-    test("Then it should respond with those 3 locations", async () => {
-      const expectedLocations = 3;
+  describe("When it recieves a request with query page=2 and limit=10 and there are 40 locations in the database", () => {
+    test("Then it should respond with count 40, next a link with page=3, previous a link with page=1 and only 10 locations", async () => {
+      const page = 2;
+      const limit = 10;
+      const response: {
+        body: {
+          count: number;
+          next: string;
+          previous: string;
+          locations: LocationStructure[];
+        };
+      } = await request(app)
+        .get(`${locationsPath}?page=${page}`)
+        .expect(okCode);
 
-      const response: { body: { locations: LocationStructure[] } } =
-        await request(app).get(locationsPath).expect(okCode);
+      const { count, locations, next, previous } = response.body;
 
-      expect(response.body.locations).toHaveLength(expectedLocations);
+      expect(locations).toHaveLength(limit);
+      expect(count).toBe(expectedLocations);
+      expect(next).toContain(`page=${page + 1}`);
+      expect(previous).toContain(`page=${page - 1}`);
     });
   });
 });
