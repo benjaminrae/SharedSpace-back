@@ -41,10 +41,28 @@ describe("Given an addLocation controller", () => {
       req.userId = newLocation.owner.toString();
       req.body = newLocation;
 
+      const image = `${req.protocol}://${req.get("host")}/${
+        expectedResponse.images.image
+      }`;
+      const small = `${req.protocol}://${req.get("host")}/${
+        expectedResponse.images.small
+      }`;
+
       Location.create = jest.fn().mockReturnValueOnce({
         ...newLocation,
+        images: {
+          image,
+          small,
+        },
+
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        toJSON: jest.fn().mockReturnValueOnce(newLocation),
+        toJSON: jest.fn().mockReturnValueOnce({
+          ...newLocation,
+          images: {
+            image,
+            small,
+          },
+        }),
       });
 
       fs.open = jest

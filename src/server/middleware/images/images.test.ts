@@ -11,7 +11,6 @@ import { bucket } from "../../utils/supabaseConfig";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import path from "path";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
-import doesFileExist from "../../utils/files/doesFileExist";
 import type { Response } from "express";
 
 const newLocation = getRandomLocation();
@@ -143,17 +142,7 @@ describe("Given a resizeImages middleware", () => {
     const smallFileName = "small-image.webp";
     const mainFileName = "image.webp";
 
-    test("Then it should create a copy of the file and resize the images", async () => {
-      await resizeImages(req as CustomRequest, null, next);
-
-      const mainFile = await doesFileExist(getUploadPath(mainFileName));
-      const smallFile = await doesFileExist(getUploadPath(smallFileName));
-
-      expect(mainFile).toBe(true);
-      expect(smallFile).toBe(true);
-    });
-
-    test("And then it should add the files to the body of the request and invoke next", async () => {
+    test("Then it should add the files to the body of the request and invoke next", async () => {
       await resizeImages(req as CustomRequest, null, next);
 
       expect(req.body.images).toHaveProperty(
