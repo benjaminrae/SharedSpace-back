@@ -2,7 +2,12 @@ import CustomError from "../../CustomError/CustomError.js";
 import httpStatusCodes from "./httpStatusCodes.js";
 
 const {
-  clientErrors: { unauthorizedCode, conflictsErrorCode, badRequestCode },
+  clientErrors: {
+    unauthorizedCode,
+    conflictsErrorCode,
+    badRequestCode,
+    forbiddenCode,
+  },
 } = httpStatusCodes;
 
 const incorrectCredentialsMessage = "Incorrect username or password";
@@ -38,8 +43,14 @@ export const authErrors = {
 
   missingBearerError: new CustomError(
     "Missing Bearer in token",
-    401,
+    unauthorizedCode,
     "Bad token"
+  ),
+
+  forbiddenError: new CustomError(
+    "Forbidden",
+    forbiddenCode,
+    "That action is forbidden"
   ),
 };
 

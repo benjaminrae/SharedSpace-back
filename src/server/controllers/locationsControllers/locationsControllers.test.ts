@@ -6,15 +6,18 @@ import {
   getRandomLocations,
 } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../../middleware/auth/types";
+import { authErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import {
   addLocation,
+  deleteLocationById,
   getLocations,
   getMyLocations,
 } from "./locationsControllers";
 
 const {
   successCodes: { createdCode, okCode },
+  clientErrors: { forbiddenCode },
 } = httpStatusCodes;
 
 const req: Partial<CustomRequest> = {
@@ -304,6 +307,70 @@ describe("Given a getMyLocations controller", () => {
       });
 
       await getMyLocations(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a deleteLocationById controller", () => {
+  describe("When it receives a request from user id '1234' to delete a location but the owner id is '5678'", () => {
+    test("Then it should invoke next with an error with code 403 and message 'That action is forbidden'", async () => {
+      const { forbiddenError } = authErrors;
+      const message = "That action is forbidden";
+      req.userId = "1234";
+      req.params = {
+        locationId: "locationid",
+      };
+
+      Location.findOne = jest.fn().mockResolvedValue({
+        owner: { toString: jest.fn().mockReturnValue("5678") },
+      });
+
+      await deleteLocationById(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(forbiddenError);
+      expect(forbiddenError).toHaveProperty("statusCode", forbiddenCode);
+      expect(forbiddenError).toHaveProperty("publicMessage", message);
+    });
+  });
+
+  describe("When it receives a request from userId '1234' and the user is the owner of the location", () => {
+    test("Then it should invoke response's status with 200 and json with the message 'Location deleted successfully", async () => {
+      req.userId = "1234";
+      const location = getRandomLocation();
+      req.params = {
+        locationId: "locationid",
+      };
+      const message = "Location deleted successfully";
+
+      Location.findOne = jest.fn().mockResolvedValue({
+        owner: { toString: jest.fn().mockReturnValue("1234") },
+        delete: jest.fn().mockResolvedValue(undefined),
+        location,
+      });
+
+      await deleteLocationById(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({ message });
+    });
+  });
+
+  describe("When it receives a request to delete a location but the database query fails", () => {
+    test("Then it should invoke next with the thrown error", async () => {
+      req.userId = "1234";
+      req.params = {
+        locationId: "locationid",
+      };
+      const error = new Error("");
+
+      Location.findOne = jest.fn().mockResolvedValue({
+        owner: { toString: jest.fn().mockReturnValue("1234") },
+        delete: jest.fn().mockRejectedValue(error),
+      });
+
+      await deleteLocationById(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(error);
     });
