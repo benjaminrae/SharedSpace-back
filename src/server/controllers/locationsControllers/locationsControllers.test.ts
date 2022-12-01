@@ -356,4 +356,23 @@ describe("Given a deleteLocationById controller", () => {
       expect(res.json).toHaveBeenCalledWith({ message });
     });
   });
+
+  describe("When it receives a request to delete a location but the database query fails", () => {
+    test("Then it should invoke next with the thrown error", async () => {
+      req.userId = "1234";
+      req.params = {
+        locationId: "locationid",
+      };
+      const error = new Error("");
+
+      Location.findOne = jest.fn().mockResolvedValue({
+        owner: { toString: jest.fn().mockReturnValue("1234") },
+        delete: jest.fn().mockRejectedValue(error),
+      });
+
+      await deleteLocationById(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 });
