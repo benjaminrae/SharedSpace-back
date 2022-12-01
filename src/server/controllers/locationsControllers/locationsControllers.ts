@@ -19,22 +19,23 @@ export const addLocation = async (
     const newLocation = await Location.create({
       ...receivedLocation,
       owner: userId,
+      images: {
+        ...receivedLocation.images,
+        image: `${req.protocol}://${req.get("host")}/${
+          receivedLocation.images.image
+        }`,
+        small: `${req.protocol}://${req.get("host")}/${
+          receivedLocation.images.small
+        }`,
+      },
     });
-
-    const image = `${req.protocol}://${req.get("host")}/${
-      newLocation.images.image
-    }`;
-
-    const small = `${req.protocol}://${req.get("host")}/${
-      newLocation.images.small
-    }`;
 
     res.status(201).json({
       location: {
         ...newLocation.toJSON(),
         images: {
-          image,
-          small,
+          image: newLocation.images.image,
+          small: newLocation.images.small,
         },
       },
     });
