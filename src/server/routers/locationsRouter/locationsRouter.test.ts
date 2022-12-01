@@ -1,28 +1,35 @@
 import fs from "fs/promises";
+import jwt from "jsonwebtoken";
 import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import request from "supertest";
 import connectDatabase from "../../../database/connectDatabase";
 import Location from "../../../database/models/Location";
+import User from "../../../database/models/User";
 import {
   getRandomLocation,
   getRandomLocations,
 } from "../../../factories/locationsFactory";
+import { environment } from "../../../loadEnvironment";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
 import type { LocationStructure } from "../../controllers/locationsControllers/types";
+import type { CustomTokenPayload } from "../../controllers/userControllers/types";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import paths from "../paths";
 
 const {
   locationsAddPath,
+  getMyLocationsPath,
   partialPaths: { locationsPath },
 } = paths;
 
 const {
   successCodes: { createdCode, okCode },
 } = httpStatusCodes;
+
+const { jwtSecret } = environment;
 
 const newLocation = getRandomLocation();
 
@@ -106,6 +113,57 @@ describe("Given a GET /locations endpoint", () => {
       expect(count).toBe(expectedLocations);
       expect(next).toContain(`page=${page + 1}`);
       expect(previous).toContain(`page=${page - 1}`);
+    });
+  });
+});
+
+describe("Given a GET /locations/my-locations endpoint", () => {
+  const count = 30;
+  const locations = getRandomLocations(30);
+  let userToken: string;
+  let userLocations: LocationStructure[];
+
+  beforeAll(async () => {
+    const user = await User.create({
+      owner: true,
+      password: "password",
+      username: "admin",
+    });
+    userToken = jwt.sign(
+      {
+        id: user._id.toString(),
+        owner: true,
+        username: "admin",
+      } as CustomTokenPayload,
+      jwtSecret
+    );
+
+    userLocations = locations.map((location) => ({
+      ...location,
+      owner: user._id,
+    }));
+    await Location.create(userLocations);
+  });
+
+  describe("When it receives a request with an authentication token and the user has 30 locations in the databse", () => {
+    test("Then it should return count 30, next with page=2 previous null and 30 locations", async () => {
+      const limit = 10;
+
+      const response: {
+        body: {
+          count: number;
+          next: string;
+          previous: string;
+          locations: LocationStructure[];
+        };
+      } = await request(app)
+        .get(getMyLocationsPath)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(okCode);
+
+      expect(response.body.count).toBe(count);
+      expect(response.body.next).toContain("page=2");
+      expect(response.body.locations).toHaveLength(limit);
     });
   });
 });

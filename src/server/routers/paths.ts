@@ -5,6 +5,7 @@ const paths = {
     registerPath: "/register",
     locationsPath: "/locations",
     addPath: "/add",
+    myLocationsPath: "/my-locations",
   },
 
   get usersLoginPath() {
@@ -17,6 +18,10 @@ const paths = {
 
   get locationsAddPath() {
     return `${this.partialPaths.locationsPath}${this.partialPaths.addPath}`;
+  },
+
+  get getMyLocationsPath() {
+    return `${this.partialPaths.locationsPath}${this.partialPaths.myLocationsPath}`;
   },
 };
 
