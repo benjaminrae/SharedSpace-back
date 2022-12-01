@@ -15,6 +15,7 @@ import {
   renameImages,
   resizeImages,
 } from "../../middleware/images/images.js";
+import validateId from "../../middleware/validation/validateId.js";
 
 const {
   partialPaths: { addPath, myLocationsPath, deleteLocationPath },
@@ -47,6 +48,11 @@ locationsRouter.post(
   addLocation
 );
 
-locationsRouter.delete(deleteLocationPath, auth, deleteLocationById);
+locationsRouter.delete(
+  deleteLocationPath,
+  auth,
+  validateId,
+  deleteLocationById
+);
 
 export default locationsRouter;

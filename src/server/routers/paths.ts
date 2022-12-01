@@ -24,6 +24,10 @@ const paths = {
   get getMyLocationsPath() {
     return `${this.partialPaths.locationsPath}${this.partialPaths.myLocationsPath}`;
   },
+
+  get deleteLocationPath() {
+    return `${this.partialPaths.locationsPath}/delete-location`;
+  },
 };
 
 export default paths;

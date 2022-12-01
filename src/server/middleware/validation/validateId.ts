@@ -1,6 +1,6 @@
 import type { NextFunction, Response } from "express";
 import mongoose from "mongoose";
-import { validationErrors } from "../../utils/errors";
+import { validationErrors } from "../../utils/errors.js";
 import type { CustomRequest } from "../auth/types";
 
 const { invalidIdError } = validationErrors;
