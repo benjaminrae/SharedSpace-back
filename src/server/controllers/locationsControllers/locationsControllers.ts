@@ -3,7 +3,12 @@ import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
 import { authErrors } from "../../utils/errors.js";
 import getLinks from "../../utils/getLinks.js";
+import httpStatusCodes from "../../utils/httpStatusCodes.js";
 import type { LocationStructure } from "./types";
+
+const {
+  successCodes: { createdCode, okCode },
+} = httpStatusCodes;
 
 export const addLocation = async (
   req: CustomRequest<
@@ -32,7 +37,7 @@ export const addLocation = async (
       },
     });
 
-    res.status(201).json({
+    res.status(createdCode).json({
       location: {
         ...newLocation.toJSON(),
         images: {
@@ -63,7 +68,7 @@ export const getLocations = async (
 
     const [next, previous] = getLinks(req, count);
 
-    res.status(200).json({ count, next, previous, locations });
+    res.status(okCode).json({ count, next, previous, locations });
   } catch (error: unknown) {
     next(error);
   }
@@ -88,7 +93,7 @@ export const getMyLocations = async (
 
     const [next, previous] = getLinks(req, count);
 
-    res.status(200).json({ count, next, previous, locations });
+    res.status(okCode).json({ count, next, previous, locations });
   } catch (error: unknown) {
     next(error);
   }
@@ -101,7 +106,7 @@ export const deleteLocationById = async (
 ) => {
   const { userId } = req;
 
-  const { locationId } = req.query;
+  const { locationId } = req.params;
 
   const { forbiddenError } = authErrors;
 
@@ -112,6 +117,10 @@ export const deleteLocationById = async (
       next(forbiddenError);
       return;
     }
+
+    await location.delete();
+
+    res.status(okCode).json({ message: "Location deleted successfully" });
   } catch (error: unknown) {
     next(error);
   }
