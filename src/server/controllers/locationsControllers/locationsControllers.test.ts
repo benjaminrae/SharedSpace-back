@@ -7,7 +7,11 @@ import {
 } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../../middleware/auth/types";
 import httpStatusCodes from "../../utils/httpStatusCodes";
-import { addLocation, getLocations } from "./locationsControllers";
+import {
+  addLocation,
+  getLocations,
+  getMyLocations,
+} from "./locationsControllers";
 
 const {
   successCodes: { createdCode, okCode },
@@ -212,6 +216,94 @@ describe("Given a getLocations controller", () => {
       });
 
       await getLocations(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a getMyLocations controller", () => {
+  describe("When it receives a custom request with userId and the user has 1 location in the database", () => {
+    test("Then it should invoke response's status with 200 and json with count 1, next: null, previous null and 1 location", async () => {
+      const count = 1;
+      const location = getRandomLocation();
+      req.userId = location.owner.toString();
+      req.query = {};
+
+      Location.find = jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            exec: jest.fn().mockReturnValue([location]),
+          }),
+        }),
+      });
+
+      Location.countDocuments = jest.fn().mockResolvedValue(count);
+
+      await getMyLocations(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({
+        count,
+        next: null,
+        previous: null,
+        locations: [location],
+      });
+    });
+  });
+
+  describe("When it receives a custom request with userId  and query page=2 and the user has 30 locations in the database", () => {
+    test("Then it should invoke response's status with 200 and json with count 30, next, previous and 30 locations", async () => {
+      const count = 30;
+      req.protocol = "http";
+      req.url = "/locations";
+      const host = "sharedspace.com";
+      req.get = jest.fn().mockReturnValue(host);
+      const nextUrl = `${req.protocol}://${host}${req.url}?page=3&limit=10`;
+      const previous = `${req.protocol}://${host}${req.url}?page=1&limit=10`;
+      const locations = getRandomLocations(30);
+      req.userId = locations[0].owner.toString();
+      req.query = {
+        page: "2",
+      };
+
+      Location.find = jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            exec: jest.fn().mockReturnValue(locations),
+          }),
+        }),
+      });
+
+      Location.countDocuments = jest.fn().mockResolvedValue(count);
+
+      await getMyLocations(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({
+        count,
+        next: nextUrl,
+        previous,
+        locations,
+      });
+    });
+  });
+
+  describe("When it receives a request and a next function and the database query fails", () => {
+    test("Then it should call next with the thrown error", async () => {
+      const error = new Error("");
+
+      req.userId = "id";
+
+      Location.find = jest.fn().mockReturnValue({
+        limit: jest.fn().mockReturnValue({
+          skip: jest.fn().mockReturnValue({
+            exec: jest.fn().mockRejectedValue(error),
+          }),
+        }),
+      });
+
+      await getMyLocations(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(error);
     });
