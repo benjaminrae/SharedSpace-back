@@ -6,6 +6,7 @@ const paths = {
     locationsPath: "/locations",
     addPath: "/add",
     myLocationsPath: "/my-locations",
+    deleteLocationPath: "/delete-location/:locationId",
   },
 
   get usersLoginPath() {

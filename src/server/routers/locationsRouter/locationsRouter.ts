@@ -2,6 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import {
   addLocation,
+  deleteLocationById,
   getLocations,
   getMyLocations,
 } from "../../controllers/locationsControllers/locationsControllers.js";
@@ -16,7 +17,7 @@ import {
 } from "../../middleware/images/images.js";
 
 const {
-  partialPaths: { addPath, myLocationsPath },
+  partialPaths: { addPath, myLocationsPath, deleteLocationPath },
 } = paths;
 
 const { maxUploadSize } = environment;
@@ -45,5 +46,7 @@ locationsRouter.post(
   backupImages,
   addLocation
 );
+
+locationsRouter.delete(deleteLocationPath, auth, deleteLocationById);
 
 export default locationsRouter;
