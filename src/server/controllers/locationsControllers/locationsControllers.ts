@@ -77,3 +77,39 @@ export const getLocations = async (
     next(error);
   }
 };
+
+export const getMyLocations = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  const { userId } = req;
+
+  try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const locations = await Location.find({ owner: userId })
+      .limit(+limit * 1)
+      .skip((+page - 1) * +limit)
+      .exec();
+
+    const count = await Location.countDocuments();
+
+    const next =
+      +page < count / +limit
+        ? `${req.protocol}://${req.get("host")}${req.url}?page=${
+            +page + 1
+          }&limit=${limit as string}`
+        : null;
+    const previous =
+      page > 1
+        ? `${req.protocol}://${req.get("host")}${req.url}?page=${
+            +page - 1
+          }&limit=${limit as string}`
+        : null;
+
+    res.status(200).json({ count, next, previous, locations });
+  } catch (error: unknown) {
+    next(error);
+  }
+};
