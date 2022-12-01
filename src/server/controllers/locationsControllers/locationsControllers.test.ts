@@ -6,15 +6,18 @@ import {
   getRandomLocations,
 } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../../middleware/auth/types";
+import { authErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import {
   addLocation,
+  deleteLocationById,
   getLocations,
   getMyLocations,
 } from "./locationsControllers";
 
 const {
   successCodes: { createdCode, okCode },
+  clientErrors: { forbiddenCode },
 } = httpStatusCodes;
 
 const req: Partial<CustomRequest> = {
@@ -306,6 +309,26 @@ describe("Given a getMyLocations controller", () => {
       await getMyLocations(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a deleteLocationById controller", () => {
+  describe("When it receives a request from user id '1234' to delete a location but the owner id is '5678'", () => {
+    test("Then it should invoke next with an error with code 403 and message 'That action is forbidden'", async () => {
+      const { forbiddenError } = authErrors;
+      const message = "That action is forbidden";
+      req.userId = "1234";
+
+      Location.findOne = jest.fn().mockResolvedValue({
+        owner: { toString: jest.fn().mockReturnValue("5678") },
+      });
+
+      await deleteLocationById(req as CustomRequest, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(forbiddenError);
+      expect(forbiddenError).toHaveProperty("statusCode", forbiddenCode);
+      expect(forbiddenError).toHaveProperty("publicMessage", message);
     });
   });
 });
