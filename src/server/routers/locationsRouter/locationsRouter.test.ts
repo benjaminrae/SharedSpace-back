@@ -58,6 +58,7 @@ describe("Given a POST /locations/add endpoint", () => {
         .set("Authorization", mockToken)
         .field("name", newLocation.name)
         .field("location", newLocation.location)
+        .field("description", newLocation.description)
         .attach("image", fileData, `${__dirname}/mockImage.jpg`)
         .expect(createdCode);
 
