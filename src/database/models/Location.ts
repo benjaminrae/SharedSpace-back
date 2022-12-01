@@ -14,6 +14,10 @@ export const locationSchema = new Schema({
     ref: "User",
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
   services: {
     allDayAccess: { type: Boolean },
     airConditioning: { type: Boolean },

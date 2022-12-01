@@ -7,6 +7,7 @@ const locationFactory = Factory.define<LocationStructure>(() => ({
   name: faker.company.name(),
   location: faker.address.nearbyGPSCoordinate().toString(),
   owner: new mongoose.Types.ObjectId(),
+  description: faker.random.words(20),
   images: {
     image: faker.image.business(),
     small: faker.image.business(),
