@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
+import getLinks from "../../utils/getLinks.js";
 import type { LocationStructure } from "./types";
 
 export const addLocation = async (
@@ -59,18 +60,7 @@ export const getLocations = async (
 
     const count = await Location.countDocuments();
 
-    const next =
-      +page < count / +limit
-        ? `${req.protocol}://${req.get("host")}${req.url}?page=${
-            +page + 1
-          }&limit=${limit as string}`
-        : null;
-    const previous =
-      page > 1
-        ? `${req.protocol}://${req.get("host")}${req.url}?page=${
-            +page - 1
-          }&limit=${limit as string}`
-        : null;
+    const [next, previous] = getLinks(req, count);
 
     res.status(200).json({ count, next, previous, locations });
   } catch (error: unknown) {
@@ -93,20 +83,9 @@ export const getMyLocations = async (
       .skip((+page - 1) * +limit)
       .exec();
 
-    const count = await Location.countDocuments();
+    const count = await Location.countDocuments({ owner: userId });
 
-    const next =
-      +page < count / +limit
-        ? `${req.protocol}://${req.get("host")}${req.url}?page=${
-            +page + 1
-          }&limit=${limit as string}`
-        : null;
-    const previous =
-      page > 1
-        ? `${req.protocol}://${req.get("host")}${req.url}?page=${
-            +page - 1
-          }&limit=${limit as string}`
-        : null;
+    const [next, previous] = getLinks(req, count);
 
     res.status(200).json({ count, next, previous, locations });
   } catch (error: unknown) {
