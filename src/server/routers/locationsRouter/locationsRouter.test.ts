@@ -31,6 +31,7 @@ const {
 
 const {
   successCodes: { createdCode, okCode },
+  clientErrors: { badRequestCode },
 } = httpStatusCodes;
 
 const { jwtSecret } = environment;
@@ -200,7 +201,7 @@ describe("Given a DELETE /locations/delete-location/:locationId endpoint", () =>
   });
 
   describe("When it receives an authorized request and a location id that exists in the database", () => {
-    test("Then it should response with status 200 and the message 'Location deleted successfully'", async () => {
+    test("Then it should respond with status 200 and the message 'Location deleted successfully'", async () => {
       const message = "Location deleted successfully";
 
       const response = await request(app)
@@ -209,6 +210,19 @@ describe("Given a DELETE /locations/delete-location/:locationId endpoint", () =>
         .expect(okCode);
 
       expect(response.body).toStrictEqual({ message });
+    });
+  });
+
+  describe("When it receives an authorized request with an invalid id", () => {
+    test("Then it should respond with status 400 and message 'You provided an invalid id'", async () => {
+      const error = "You provided an invalid id";
+
+      const response = await request(app)
+        .delete(`${deleteLocationPath}/12345`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(badRequestCode);
+
+      expect(response.body).toStrictEqual({ error });
     });
   });
 });
