@@ -61,3 +61,11 @@ export const imageErrors = {
     "Wrong image format. Accepeted formats: png, jpg, jpeg, avif and webp"
   ),
 };
+
+export const validationErrors = {
+  invalidIdError: new CustomError(
+    "Invalid id",
+    badRequestCode,
+    "You provided an invalid id"
+  ),
+};

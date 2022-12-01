@@ -13,7 +13,10 @@ import {
 import { environment } from "../../../loadEnvironment";
 import mockToken from "../../../mocks/mockToken";
 import app from "../../app";
-import type { LocationStructure } from "../../controllers/locationsControllers/types";
+import type {
+  LocationStructure,
+  LocationWithIdStructure,
+} from "../../controllers/locationsControllers/types";
 import type { CustomTokenPayload } from "../../controllers/userControllers/types";
 import getUploadPath from "../../utils/getUploadPath/getUploadPath";
 import httpStatusCodes from "../../utils/httpStatusCodes";
@@ -22,11 +25,13 @@ import paths from "../paths";
 const {
   locationsAddPath,
   getMyLocationsPath,
+  deleteLocationPath,
   partialPaths: { locationsPath },
 } = paths;
 
 const {
   successCodes: { createdCode, okCode },
+  clientErrors: { badRequestCode },
 } = httpStatusCodes;
 
 const { jwtSecret } = environment;
@@ -145,6 +150,10 @@ describe("Given a GET /locations/my-locations endpoint", () => {
     await Location.create(userLocations);
   });
 
+  afterAll(async () => {
+    await Location.deleteMany({});
+  });
+
   describe("When it receives a request with an authentication token and the user has 30 locations in the databse", () => {
     test("Then it should return count 30, next with page=2 previous null and 30 locations", async () => {
       const limit = 10;
@@ -164,6 +173,56 @@ describe("Given a GET /locations/my-locations endpoint", () => {
       expect(response.body.count).toBe(count);
       expect(response.body.next).toContain("page=2");
       expect(response.body.locations).toHaveLength(limit);
+    });
+  });
+});
+
+describe("Given a DELETE /locations/delete-location/:locationId endpoint", () => {
+  const location = getRandomLocation();
+  let userToken: string;
+  let storedLocation: LocationWithIdStructure;
+
+  beforeAll(async () => {
+    const user = await User.create({
+      owner: true,
+      password: "password",
+      username: "new_user",
+    });
+    userToken = jwt.sign(
+      {
+        id: user._id.toString(),
+        owner: true,
+        username: "admin",
+      } as CustomTokenPayload,
+      jwtSecret
+    );
+    location.owner = user._id;
+    storedLocation = await Location.create(location);
+  });
+
+  describe("When it receives an authorized request and a location id that exists in the database", () => {
+    test("Then it should respond with status 200 and the message 'Location deleted successfully'", async () => {
+      const message = "Location deleted successfully";
+
+      const response = await request(app)
+        .delete(`${deleteLocationPath}/${storedLocation._id.toString()}`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(okCode);
+
+      expect(response.body).toStrictEqual({ message });
+    });
+  });
+
+  describe("When it receives an authorized request with an invalid id", () => {
+    test("Then it should respond with status 400 and message 'You provided an invalid id'", async () => {
+      const error = "You provided an invalid id";
+
+      const response = await request(app)
+        .delete(`${deleteLocationPath}/12345`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .expect(badRequestCode);
+
+      expect(response.body).toStrictEqual({ error });
     });
   });
 });
