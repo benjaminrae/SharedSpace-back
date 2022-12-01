@@ -1,7 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
-import doesFileExist from "../../utils/files/doesFileExist.js";
 import type { LocationStructure } from "./types";
 
 export const addLocation = async (
@@ -22,13 +21,13 @@ export const addLocation = async (
       owner: userId,
     });
 
-    const image = (await doesFileExist(newLocation.images.image))
-      ? `${req.protocol}://${req.get("host")}/${newLocation.images.image}`
-      : newLocation.images.backup;
+    const image = `${req.protocol}://${req.get("host")}/${
+      newLocation.images.image
+    }`;
 
-    const small = (await doesFileExist(newLocation.images.small))
-      ? `${req.protocol}://${req.get("host")}/${newLocation.images.small}`
-      : newLocation.images.backupSmall;
+    const small = `${req.protocol}://${req.get("host")}/${
+      newLocation.images.small
+    }`;
 
     res.status(201).json({
       location: {
