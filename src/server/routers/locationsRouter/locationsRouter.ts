@@ -3,6 +3,7 @@ import multer from "multer";
 import {
   addLocation,
   getLocations,
+  getMyLocations,
 } from "../../controllers/locationsControllers/locationsControllers.js";
 import paths from "../paths.js";
 import fileFilter from "../../utils/fileFilter/fileFilter.js";
@@ -15,7 +16,7 @@ import {
 } from "../../middleware/images/images.js";
 
 const {
-  partialPaths: { addPath },
+  partialPaths: { addPath, myLocationsPath },
 } = paths;
 
 const { maxUploadSize } = environment;
@@ -32,6 +33,8 @@ const upload = multer({
 const locationsRouter = Router();
 
 locationsRouter.get("", getLocations);
+
+locationsRouter.get(myLocationsPath, auth, getMyLocations);
 
 locationsRouter.post(
   addPath,
