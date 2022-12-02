@@ -5,13 +5,13 @@ const getLinks = (req: Request, count: number) => {
 
   const next =
     +page < count / +limit
-      ? `${req.protocol}://${req.get("host")}${req.url}?page=${
+      ? `${req.protocol}://${req.get("host")}${req.baseUrl}?page=${
           +page + 1
         }&limit=${limit as string}`
       : null;
   const previous =
     page > 1
-      ? `${req.protocol}://${req.get("host")}${req.url}?page=${
+      ? `${req.protocol}://${req.get("host")}${req.baseUrl}?page=${
           +page - 1
         }&limit=${limit as string}`
       : null;

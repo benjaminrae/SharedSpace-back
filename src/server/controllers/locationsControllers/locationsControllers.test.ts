@@ -177,11 +177,11 @@ describe("Given a getLocations controller", () => {
     test("Then it should invoke response's method json with next a link with page=3 and previous a link with page=1", async () => {
       req.query = { page: "2" };
       req.protocol = "http";
-      req.url = "/locations";
+      req.baseUrl = "/locations";
       const host = "sharedspace.com";
       req.get = jest.fn().mockReturnValue(host);
-      const nextUrl = `${req.protocol}://${host}${req.url}?page=3&limit=10`;
-      const previous = `${req.protocol}://${host}${req.url}?page=1&limit=10`;
+      const nextUrl = `${req.protocol}://${host}${req.baseUrl}?page=3&limit=10`;
+      const previous = `${req.protocol}://${host}${req.baseUrl}?page=1&limit=10`;
       const total = 30;
       const locations = getRandomLocations(total);
 
