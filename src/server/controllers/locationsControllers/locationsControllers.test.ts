@@ -6,18 +6,21 @@ import {
   getRandomLocations,
 } from "../../../factories/locationsFactory";
 import type { CustomRequest } from "../../middleware/auth/types";
-import { authErrors } from "../../utils/errors";
+import { authErrors, locationErrors } from "../../utils/errors";
 import httpStatusCodes from "../../utils/httpStatusCodes";
 import {
   addLocation,
   deleteLocationById,
+  getLocationById,
   getLocations,
   getMyLocations,
 } from "./locationsControllers";
 
+const { locationNotFoundError } = locationErrors;
+
 const {
   successCodes: { createdCode, okCode },
-  clientErrors: { forbiddenCode },
+  clientErrors: { forbiddenCode, notFoundErrorCode },
 } = httpStatusCodes;
 
 const req: Partial<CustomRequest> = {
@@ -373,6 +376,43 @@ describe("Given a deleteLocationById controller", () => {
       await deleteLocationById(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given a getLocationById controller", () => {
+  describe("When it receives a request with id '1234'", () => {
+    test("Then it should invoke response's status method with 200 and json with the found location", async () => {
+      const locationId = "1234";
+      req.params = { locationId };
+
+      const location = getRandomLocation();
+
+      Location.findById = jest.fn().mockResolvedValue(location);
+
+      await getLocationById(req as Request, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({ location });
+    });
+  });
+
+  describe("When it receives a request with id '5678 and the location isn't found", () => {
+    test("Then it should invoke next with an error with status 404 and message 'Location not found'", async () => {
+      const locationId = "5678";
+      req.params = { locationId };
+      const message = "Location not found";
+
+      Location.findById = jest.fn().mockResolvedValue(null);
+
+      await getLocationById(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(locationNotFoundError);
+      expect(locationNotFoundError).toHaveProperty(
+        "statusCode",
+        notFoundErrorCode
+      );
+      expect(locationNotFoundError).toHaveProperty("publicMessage", message);
     });
   });
 });
