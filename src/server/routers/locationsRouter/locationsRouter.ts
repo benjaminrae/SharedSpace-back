@@ -3,6 +3,7 @@ import multer from "multer";
 import {
   addLocation,
   deleteLocationById,
+  getLocationById,
   getLocations,
   getMyLocations,
 } from "../../controllers/locationsControllers/locationsControllers.js";
@@ -18,7 +19,12 @@ import {
 import validateId from "../../middleware/validation/validateId.js";
 
 const {
-  partialPaths: { addPath, myLocationsPath, deleteLocationPath },
+  partialPaths: {
+    addPath,
+    myLocationsPath,
+    deleteLocationPath,
+    locationByIdPath,
+  },
 } = paths;
 
 const { maxUploadSize } = environment;
@@ -54,5 +60,7 @@ locationsRouter.delete(
   validateId,
   deleteLocationById
 );
+
+locationsRouter.get(locationByIdPath, validateId, getLocationById);
 
 export default locationsRouter;
