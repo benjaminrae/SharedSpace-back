@@ -415,4 +415,19 @@ describe("Given a getLocationById controller", () => {
       expect(locationNotFoundError).toHaveProperty("publicMessage", message);
     });
   });
+
+  describe("When it receives a request with id '1234' and the database query fails", () => {
+    test("Then it should invoke next with the thrown error", async () => {
+      const locationId = "1234";
+      req.params = { locationId };
+
+      const error = new Error("");
+
+      Location.findById = jest.fn().mockRejectedValue(error);
+
+      await getLocationById(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
 });
