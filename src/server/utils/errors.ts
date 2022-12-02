@@ -7,6 +7,7 @@ const {
     conflictsErrorCode,
     badRequestCode,
     forbiddenCode,
+    notFoundErrorCode,
   },
 } = httpStatusCodes;
 
@@ -67,5 +68,13 @@ export const validationErrors = {
     "Invalid id",
     badRequestCode,
     "You provided an invalid id"
+  ),
+};
+
+export const locationErrors = {
+  locationNotFoundError: new CustomError(
+    "Location not found",
+    notFoundErrorCode,
+    "Location not found"
   ),
 };

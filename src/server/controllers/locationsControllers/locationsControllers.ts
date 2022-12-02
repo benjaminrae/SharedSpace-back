@@ -1,10 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import Location from "../../../database/models/Location.js";
 import type { CustomRequest } from "../../middleware/auth/types";
-import { authErrors } from "../../utils/errors.js";
+import { authErrors, locationErrors } from "../../utils/errors.js";
 import getLinks from "../../utils/getLinks.js";
 import httpStatusCodes from "../../utils/httpStatusCodes.js";
 import type { LocationStructure } from "./types";
+
+const { locationNotFoundError } = locationErrors;
 
 const {
   successCodes: { createdCode, okCode },
@@ -121,6 +123,27 @@ export const deleteLocationById = async (
     await location.delete();
 
     res.status(okCode).json({ message: "Location deleted successfully" });
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+export const getLocationById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { locationId } = req.params;
+
+  try {
+    const location = await Location.findById(locationId);
+
+    if (!location) {
+      next(locationNotFoundError);
+      return;
+    }
+
+    res.status(okCode).json({ location });
   } catch (error: unknown) {
     next(error);
   }
