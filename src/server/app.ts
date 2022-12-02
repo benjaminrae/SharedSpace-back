@@ -18,6 +18,7 @@ app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(express.json());
 app.disable("x-powered-by");
+app.enable("trust proxy");
 app.use("/uploads", express.static("uploads"), serveFallbackImage);
 
 app.use(usersPath, usersRouter);
