@@ -263,7 +263,7 @@ describe("Given a GET /locations/location/:locationId path", () => {
         .get(`${getLocationByIdPath}/1234`)
         .expect(badRequestCode);
 
-      expect(response.body).toStrictEqual(error);
+      expect(response.body).toStrictEqual({ error });
     });
   });
 });
