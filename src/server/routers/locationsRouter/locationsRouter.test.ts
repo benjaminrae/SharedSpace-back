@@ -26,6 +26,7 @@ const {
   locationsAddPath,
   getMyLocationsPath,
   deleteLocationPath,
+  getLocationByIdPath,
   partialPaths: { locationsPath },
 } = paths;
 
@@ -220,6 +221,46 @@ describe("Given a DELETE /locations/delete-location/:locationId endpoint", () =>
       const response = await request(app)
         .delete(`${deleteLocationPath}/12345`)
         .set("Authorization", `Bearer ${userToken}`)
+        .expect(badRequestCode);
+
+      expect(response.body).toStrictEqual({ error });
+    });
+  });
+});
+
+describe("Given a GET /locations/location/:locationId path", () => {
+  const location = getRandomLocation();
+  let storedLocation: LocationWithIdStructure;
+  let locationId: string;
+
+  beforeAll(async () => {
+    storedLocation = await Location.create(location);
+
+    locationId = storedLocation._id.toString();
+  });
+
+  describe("When it receives a request with a correct id that exists in the database", () => {
+    test("Then it should respond with status 200 and the found location", async () => {
+      const response: { body: { location: LocationStructure } } = await request(
+        app
+      )
+        .get(`${getLocationByIdPath}/${locationId}`)
+        .expect(okCode);
+
+      const {
+        location: { name },
+      } = response.body;
+
+      expect(name).toStrictEqual(location.name);
+    });
+  });
+
+  describe("When it receives a request with an invalid id", () => {
+    test("Then it should respond with status 400 and 'You provided an invalid id'", async () => {
+      const error = "You provided an invalid id";
+
+      const response = await request(app)
+        .get(`${getLocationByIdPath}/1234`)
         .expect(badRequestCode);
 
       expect(response.body).toStrictEqual({ error });

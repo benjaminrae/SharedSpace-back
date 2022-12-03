@@ -7,6 +7,8 @@ const paths = {
     addPath: "/add",
     myLocationsPath: "/my-locations",
     deleteLocationPath: "/delete-location/:locationId",
+    locationByIdPath: "/location/:locationId",
+    locationPath: "/location",
   },
 
   get usersLoginPath() {
@@ -27,6 +29,10 @@ const paths = {
 
   get deleteLocationPath() {
     return `${this.partialPaths.locationsPath}/delete-location`;
+  },
+
+  get getLocationByIdPath() {
+    return `${this.partialPaths.locationsPath}${this.partialPaths.locationPath}`;
   },
 };
 
