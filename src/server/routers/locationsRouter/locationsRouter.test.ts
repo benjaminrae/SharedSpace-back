@@ -131,7 +131,6 @@ describe("Given a GET /locations endpoint", () => {
 
   describe("When it receives a request with ?services=wifi", () => {
     test("Then it should only return the locations that offer wifi", async () => {
-      const limit = 10;
       const response: {
         body: {
           count: number;
@@ -143,9 +142,8 @@ describe("Given a GET /locations endpoint", () => {
         .get(`${locationsPath}?page=2&services=wifi`)
         .expect(okCode);
 
-      const { count, locations, next, previous } = response.body;
+      const { count, next, previous } = response.body;
 
-      expect(locations).toHaveLength(limit);
       expect(count).toBe(locationsWithWifi);
       expect(next).toContain("wifi");
       expect(previous).toContain("wifi");
