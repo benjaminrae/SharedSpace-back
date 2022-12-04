@@ -95,7 +95,13 @@ describe("Given a POST /locations/add endpoint", () => {
 describe("Given a GET /locations endpoint", () => {
   const expectedLocations = 30;
   const locations = getRandomLocations(expectedLocations);
+  const locationsWithWifi = locations.filter(
+    (location) => location.services.wifi
+  ).length;
+
   beforeEach(async () => {
+    await Location.deleteMany({});
+
     await Location.create(locations);
   });
 
@@ -120,6 +126,27 @@ describe("Given a GET /locations endpoint", () => {
       expect(count).toBe(expectedLocations);
       expect(next).toContain(`page=${page + 1}`);
       expect(previous).toContain(`page=${page - 1}`);
+    });
+  });
+
+  describe("When it receives a request with ?services=wifi", () => {
+    test("Then it should only return the locations that offer wifi", async () => {
+      const limit = 10;
+      const response: {
+        body: {
+          count: number;
+          next: string;
+          previous: string;
+          locations: LocationStructure[];
+        };
+      } = await request(app)
+        .get(`${locationsPath}?services=wifi`)
+        .expect(okCode);
+
+      const { count, locations } = response.body;
+
+      expect(locations).toHaveLength(limit);
+      expect(count).toBe(locationsWithWifi);
     });
   });
 });

@@ -69,14 +69,26 @@ export const getLocations = async (
   next: NextFunction
 ) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, services } = req.query;
 
-    const locations = await Location.find({})
+    let filter = {};
+    if (services) {
+      const serviceIds = (services as string)
+        .split(",")
+        .map((service) => service);
+      filter = serviceIds.reduce(
+        (servicesFilter, service) =>
+          Object.assign(servicesFilter, { [`services.${service}`]: true }),
+        {}
+      );
+    }
+
+    const locations = await Location.find(filter)
       .limit(+limit * 1)
       .skip((+page - 1) * +limit)
       .exec();
 
-    const count = await Location.countDocuments();
+    const count = await Location.countDocuments(filter);
 
     const [next, previous] = getLinks(req, count);
 
