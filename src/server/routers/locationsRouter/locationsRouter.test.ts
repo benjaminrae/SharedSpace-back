@@ -130,8 +130,7 @@ describe("Given a GET /locations endpoint", () => {
   });
 
   describe("When it receives a request with ?services=wifi", () => {
-    test("Then it should only return the locations that offer wifi", async () => {
-      const limit = 10;
+    test("Then it should only return the locations that offer wifi and next should contain wifi", async () => {
       const response: {
         body: {
           count: number;
@@ -143,10 +142,30 @@ describe("Given a GET /locations endpoint", () => {
         .get(`${locationsPath}?services=wifi`)
         .expect(okCode);
 
-      const { count, locations } = response.body;
+      const { count, next } = response.body;
 
-      expect(locations).toHaveLength(limit);
       expect(count).toBe(locationsWithWifi);
+      expect(next).toContain("wifi");
+    });
+  });
+
+  describe("When it receives a request with ?page=2&services=wifi", () => {
+    test("Then it should only return the locations that offer wifi and previous should contain wifi", async () => {
+      const response: {
+        body: {
+          count: number;
+          next: string;
+          previous: string;
+          locations: LocationStructure[];
+        };
+      } = await request(app)
+        .get(`${locationsPath}?page=2&services=wifi`)
+        .expect(okCode);
+
+      const { count, previous } = response.body;
+
+      expect(count).toBe(locationsWithWifi);
+      expect(previous).toContain("wifi");
     });
   });
 });
