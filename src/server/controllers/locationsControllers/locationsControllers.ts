@@ -23,11 +23,30 @@ export const addLocation = async (
 ) => {
   const { userId } = req;
   const receivedLocation = req.body;
+  const { services } = receivedLocation;
 
   try {
     const newLocation = await Location.create({
       ...receivedLocation,
       owner: userId,
+      services: {
+        allDayAccess: services.allDayAccess,
+        airConditioning: services.airConditioning,
+        kitchen: services.kitchen,
+        freeTeaCoffee: services.freeTeaCoffee,
+        eventManagement: services.eventManagement,
+        freeTrial: services.freeTrial,
+        wifi: services.wifi,
+        meetingRoom: services.meetingRoom,
+        reception: services.reception,
+        parking: services.parking,
+        photocopier: services.photocopier,
+        printer: services.printer,
+        projector: services.projector,
+        scanner: services.scanner,
+        tv: services.tv,
+        whiteboard: services.whiteboard,
+      },
       images: {
         ...receivedLocation.images,
         image: `${req.protocol}://${req.get("host")}/${
