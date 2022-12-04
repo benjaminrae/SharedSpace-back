@@ -72,6 +72,7 @@ describe("Given a POST /locations/add endpoint", () => {
         .field("name", newLocation.name)
         .field("location", newLocation.location)
         .field("description", newLocation.description)
+        .field("services", JSON.stringify(newLocation.services))
         .attach("image", fileData, `${__dirname}/mockImage.jpg`)
         .expect(createdCode);
 
