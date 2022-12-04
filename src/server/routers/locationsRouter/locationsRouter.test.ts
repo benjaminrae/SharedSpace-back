@@ -140,13 +140,15 @@ describe("Given a GET /locations endpoint", () => {
           locations: LocationStructure[];
         };
       } = await request(app)
-        .get(`${locationsPath}?services=wifi`)
+        .get(`${locationsPath}?page=2&services=wifi`)
         .expect(okCode);
 
-      const { count, locations } = response.body;
+      const { count, locations, next, previous } = response.body;
 
       expect(locations).toHaveLength(limit);
       expect(count).toBe(locationsWithWifi);
+      expect(next).toContain("wifi");
+      expect(previous).toContain("wifi");
     });
   });
 });
