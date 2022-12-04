@@ -25,27 +25,18 @@ export const addLocation = async (
   const receivedLocation = req.body;
   const { services } = receivedLocation;
 
+  let parsedServices = {};
+
+  if (typeof services === "string") {
+    parsedServices = JSON.parse(services) as Partial<LocationStructure>;
+  }
+
   try {
     const newLocation = await Location.create({
       ...receivedLocation,
       owner: userId,
       services: {
-        allDayAccess: services.allDayAccess,
-        airConditioning: services.airConditioning,
-        kitchen: services.kitchen,
-        freeTeaCoffee: services.freeTeaCoffee,
-        eventManagement: services.eventManagement,
-        freeTrial: services.freeTrial,
-        wifi: services.wifi,
-        meetingRoom: services.meetingRoom,
-        reception: services.reception,
-        parking: services.parking,
-        photocopier: services.photocopier,
-        printer: services.printer,
-        projector: services.projector,
-        scanner: services.scanner,
-        tv: services.tv,
-        whiteboard: services.whiteboard,
+        ...parsedServices,
       },
       images: {
         ...receivedLocation.images,
