@@ -17,6 +17,8 @@ const newLocation = getRandomLocation();
 delete newLocation.images.backup;
 delete newLocation.images.backupSmall;
 
+const file: Partial<Express.Multer.File> = {};
+
 const req: Partial<
   CustomRequest<
     Record<string, unknown>,
@@ -25,6 +27,7 @@ const req: Partial<
   >
 > = {
   body: newLocation,
+  file: file as Express.Multer.File,
 };
 
 const next = jest.fn();
@@ -178,16 +181,6 @@ describe("Given a serveFallbackImage middleware", () => {
   const res: Partial<Response> = {
     redirect: jest.fn(),
   };
-
-  describe("When it receives a request with a path that doesn't start with /uploads", () => {
-    test("Then it should call next", () => {
-      req.originalUrl = "";
-
-      serveFallbackImage(req as CustomRequest, res as Response, next);
-
-      expect(next).toHaveBeenCalled();
-    });
-  });
 
   describe("When it receives a request with a path that starts with /uploads", () => {
     test("Then it should invoked the response's redirect method with the supabase url", () => {

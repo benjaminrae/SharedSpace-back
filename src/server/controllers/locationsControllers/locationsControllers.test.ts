@@ -442,9 +442,13 @@ describe("Given the updateLocation controller", () => {
     services: JSON.stringify(services),
   };
 
-  describe("When it receives a request with a location", () => {
+  describe("When it receives a request with a location and id '1234'", () => {
     test("Then it should respond with status 200 and the updated location", async () => {
       req.body = uploadedLocation;
+
+      req.params = {
+        locationId: "1234",
+      };
 
       Location.findByIdAndUpdate = jest
         .fn()
