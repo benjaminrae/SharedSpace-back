@@ -4,7 +4,7 @@ import type { CustomRequest } from "../../middleware/auth/types";
 import { authErrors, locationErrors } from "../../utils/errors.js";
 import getLinks from "../../utils/getLinks.js";
 import httpStatusCodes from "../../utils/httpStatusCodes.js";
-import type { LocationStructure } from "./types";
+import type { LocationStructure, UpdateLocationBody } from "./types";
 
 const { locationNotFoundError } = locationErrors;
 
@@ -166,6 +166,51 @@ export const getLocationById = async (
     }
 
     res.status(okCode).json({ location });
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+export const updateLocation = (
+  req: CustomRequest<
+    Record<string, unknown>,
+    Record<string, unknown>,
+    UpdateLocationBody
+  >,
+  res: Response,
+  next: NextFunction
+) => {
+  const receivedLocation = req.body;
+  const { services } = receivedLocation;
+
+  let parsedServices = {};
+
+  if (typeof services === "string") {
+    parsedServices = JSON.parse(services) as Partial<LocationStructure>;
+  }
+
+  try {
+    const updatedLocation = Location.findByIdAndUpdate(
+      receivedLocation.id,
+      {
+        ...receivedLocation,
+        services: {
+          ...parsedServices,
+        },
+        images: {
+          ...receivedLocation.images,
+          image: `${req.protocol}://${req.get("host")}/${
+            receivedLocation.images.image
+          }`,
+          small: `${req.protocol}://${req.get("host")}/${
+            receivedLocation.images.small
+          }`,
+        },
+      },
+      { returnDocument: "after" }
+    );
+
+    res.status(okCode).json({ location: updatedLocation });
   } catch (error: unknown) {
     next(error);
   }

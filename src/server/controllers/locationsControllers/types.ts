@@ -7,3 +7,7 @@ export type LocationStructure = InferSchemaType<typeof locationSchema>;
 export interface LocationWithIdStructure extends LocationStructure {
   _id: mongoose.Types.ObjectId;
 }
+
+export interface UpdateLocationBody extends LocationStructure {
+  id: string;
+}
