@@ -16,6 +16,11 @@ export const backupImages = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (!req.file) {
+    next();
+    return;
+  }
+
   const {
     images,
     images: { image, small },
@@ -53,6 +58,11 @@ export const renameImages = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (!req.file) {
+    next();
+    return;
+  }
+
   const timeStamp = Date.now();
 
   const fileExtension = path.extname(req.file.originalname);
@@ -75,6 +85,11 @@ export const resizeImages = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (!req.file) {
+    next();
+    return;
+  }
+
   try {
     const originalFile = getUploadPath(req.file.filename);
     const smallFile = getUploadPath(`small-${req.file.filename}`);
@@ -112,14 +127,10 @@ export const resizeImages = async (
 export const serveFallbackImage = (
   req: Request,
   res: Response,
+  // eslint-disable-next-line no-unused-vars
   next: NextFunction
 ) => {
   const { originalUrl } = req;
-
-  if (!originalUrl.startsWith("/uploads")) {
-    next();
-    return;
-  }
 
   const {
     data: { publicUrl },

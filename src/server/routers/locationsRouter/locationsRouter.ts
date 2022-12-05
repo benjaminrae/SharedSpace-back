@@ -24,6 +24,7 @@ const {
     myLocationsPath,
     deleteLocationPath,
     locationByIdPath,
+    editLocationPath,
   },
 } = paths;
 
@@ -62,5 +63,15 @@ locationsRouter.delete(
 );
 
 locationsRouter.get(locationByIdPath, validateId, getLocationById);
+
+locationsRouter.put(
+  editLocationPath,
+  auth,
+  upload.single("image"),
+  renameImages,
+  resizeImages,
+  backupImages,
+  addLocation
+);
 
 export default locationsRouter;
