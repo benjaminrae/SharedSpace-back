@@ -9,7 +9,8 @@ const paths = {
     deleteLocationPath: "/delete-location/:locationId",
     locationByIdPath: "/location/:locationId",
     locationPath: "/location",
-    editLocationPath: "/edit-location/:locationId",
+    editLocationPath: "/edit-location",
+    locationId: "/:locationId",
   },
 
   get usersLoginPath() {

@@ -27,6 +27,7 @@ const {
   getMyLocationsPath,
   deleteLocationPath,
   getLocationByIdPath,
+  editLocationPath,
   partialPaths: { locationsPath },
 } = paths;
 
@@ -311,6 +312,46 @@ describe("Given a GET /locations/location/:locationId path", () => {
         .expect(badRequestCode);
 
       expect(response.body).toStrictEqual({ error });
+    });
+  });
+});
+
+describe("Given a PUT /locations/edit-location/:locationId endpoint", () => {
+  const location = getRandomLocation();
+  let locationToUpdate: LocationWithIdStructure;
+  let userToken: string;
+
+  beforeAll(async () => {
+    const user = await User.create({
+      owner: true,
+      password: "password",
+      username: "admin",
+    });
+    userToken = jwt.sign(
+      {
+        id: user._id.toString(),
+        owner: true,
+        username: "admin",
+      } as CustomTokenPayload,
+      jwtSecret
+    );
+
+    locationToUpdate = await Location.create(location);
+  });
+
+  describe("When it receives a correct location id and a new name 'Coworking'", () => {
+    test("Then it should respond with status 200 and the updated location", async () => {
+      const newName = "Coworking";
+
+      const response: { body: { location: LocationStructure } } = await request(
+        app
+      )
+        .put(`${editLocationPath}/${locationToUpdate._id.toString()}`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .field("name", newName)
+        .expect(okCode);
+
+      expect(response.body.location).toHaveProperty("name", newName);
     });
   });
 });
