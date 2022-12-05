@@ -171,7 +171,7 @@ export const getLocationById = async (
   }
 };
 
-export const updateLocation = (
+export const updateLocation = async (
   req: CustomRequest<
     Record<string, unknown>,
     Record<string, unknown>,
@@ -190,7 +190,7 @@ export const updateLocation = (
   }
 
   try {
-    const updatedLocation = Location.findByIdAndUpdate(
+    const updatedLocation = await Location.findByIdAndUpdate(
       receivedLocation.id,
       {
         ...receivedLocation,
