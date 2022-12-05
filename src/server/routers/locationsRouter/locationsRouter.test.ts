@@ -249,6 +249,10 @@ describe("Given a DELETE /locations/delete-location/:locationId endpoint", () =>
     storedLocation = await Location.create(location);
   });
 
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
+
   describe("When it receives an authorized request and a location id that exists in the database", () => {
     test("Then it should respond with status 200 and the message 'Location deleted successfully'", async () => {
       const message = "Location deleted successfully";
