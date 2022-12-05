@@ -358,4 +358,33 @@ describe("Given a PUT /locations/edit-location/:locationId endpoint", () => {
       expect(response.body.location).toHaveProperty("name", newName);
     });
   });
+
+  describe("When it receives a correct location id and a new image", () => {
+    test("Then it should respond with status 200 and the updated location", async () => {
+      const timeStamp = Date.now();
+      Date.now = jest.fn().mockReturnValue(timeStamp);
+      const fileData = await fs.readFile(getUploadPath("mockImage.jpg"));
+      const expectedFileName = `mockImage-${timeStamp}.webp`;
+      const expectedSmallFileName = `small-mockImage-${timeStamp}.webp`;
+
+      const response: { body: { location: LocationStructure } } = await request(
+        app
+      )
+        .put(`${editLocationPath}/${locationToUpdate._id.toString()}`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .attach("image", fileData, `${__dirname}/mockImage.jpg`)
+        .expect(okCode);
+
+      const {
+        body: {
+          location: {
+            images: { image, small },
+          },
+        },
+      } = response;
+
+      expect(image).toContain(expectedFileName);
+      expect(small).toContain(expectedSmallFileName);
+    });
+  });
 });
