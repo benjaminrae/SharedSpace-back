@@ -14,6 +14,7 @@ import {
   getLocationById,
   getLocations,
   getMyLocations,
+  updateLocation,
 } from "./locationsControllers";
 
 const { locationNotFoundError } = locationErrors;
@@ -426,6 +427,47 @@ describe("Given a getLocationById controller", () => {
       Location.findById = jest.fn().mockRejectedValue(error);
 
       await getLocationById(req as Request, res as Response, next);
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+});
+
+describe("Given the updateLocation controller", () => {
+  const updatedLocation = getRandomLocation();
+  const { services } = updatedLocation;
+
+  const uploadedLocation = {
+    ...updatedLocation,
+    services: JSON.stringify(services),
+  };
+
+  describe("When it receives a request with a location", () => {
+    test("Then it should respond with status 200 and the updated location", async () => {
+      req.body = uploadedLocation;
+
+      Location.findByIdAndUpdate = jest
+        .fn()
+        .mockReturnValueOnce(updatedLocation);
+
+      await updateLocation(req as CustomRequest, res as Response, next);
+
+      expect(res.status).toHaveBeenCalledWith(okCode);
+      expect(res.json).toHaveBeenCalledWith({
+        location: updatedLocation,
+      });
+    });
+  });
+
+  describe("When it receives a request and the databse query fails", () => {
+    test("Then next should be called with the thrown error", async () => {
+      req.body = updatedLocation;
+
+      const error = new Error("");
+
+      Location.findByIdAndUpdate = jest.fn().mockRejectedValue(error);
+
+      await updateLocation(req as CustomRequest, res as Response, next);
 
       expect(next).toHaveBeenCalledWith(error);
     });
