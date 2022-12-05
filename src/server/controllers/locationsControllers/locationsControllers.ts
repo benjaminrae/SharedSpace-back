@@ -180,6 +180,7 @@ export const updateLocation = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { locationId } = req.params;
   const receivedLocation = req.body;
   const { services } = receivedLocation;
 
@@ -189,22 +190,27 @@ export const updateLocation = async (
     parsedServices = JSON.parse(services) as Partial<LocationStructure>;
   }
 
+  if (req.file) {
+    const images = {
+      ...receivedLocation.images,
+      image: `${req.protocol}://${req.get("host")}/${
+        receivedLocation.images.image
+      }`,
+      small: `${req.protocol}://${req.get("host")}/${
+        receivedLocation.images.small
+      }`,
+    };
+
+    receivedLocation.images = images;
+  }
+
   try {
     const updatedLocation = await Location.findByIdAndUpdate(
-      receivedLocation.id,
+      locationId,
       {
         ...receivedLocation,
         services: {
           ...parsedServices,
-        },
-        images: {
-          ...receivedLocation.images,
-          image: `${req.protocol}://${req.get("host")}/${
-            receivedLocation.images.image
-          }`,
-          small: `${req.protocol}://${req.get("host")}/${
-            receivedLocation.images.small
-          }`,
         },
       },
       { returnDocument: "after" }

@@ -6,6 +6,7 @@ import {
   getLocationById,
   getLocations,
   getMyLocations,
+  updateLocation,
 } from "../../controllers/locationsControllers/locationsControllers.js";
 import paths from "../paths.js";
 import fileFilter from "../../utils/fileFilter/fileFilter.js";
@@ -24,6 +25,8 @@ const {
     myLocationsPath,
     deleteLocationPath,
     locationByIdPath,
+    editLocationPath,
+    locationId,
   },
 } = paths;
 
@@ -62,5 +65,16 @@ locationsRouter.delete(
 );
 
 locationsRouter.get(locationByIdPath, validateId, getLocationById);
+
+locationsRouter.put(
+  `${editLocationPath}${locationId}`,
+  validateId,
+  auth,
+  upload.single("image"),
+  renameImages,
+  resizeImages,
+  backupImages,
+  updateLocation
+);
 
 export default locationsRouter;

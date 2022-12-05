@@ -27,6 +27,7 @@ const {
   getMyLocationsPath,
   deleteLocationPath,
   getLocationByIdPath,
+  editLocationPath,
   partialPaths: { locationsPath },
 } = paths;
 
@@ -248,6 +249,10 @@ describe("Given a DELETE /locations/delete-location/:locationId endpoint", () =>
     storedLocation = await Location.create(location);
   });
 
+  afterAll(async () => {
+    await User.deleteMany({});
+  });
+
   describe("When it receives an authorized request and a location id that exists in the database", () => {
     test("Then it should respond with status 200 and the message 'Location deleted successfully'", async () => {
       const message = "Location deleted successfully";
@@ -311,6 +316,75 @@ describe("Given a GET /locations/location/:locationId path", () => {
         .expect(badRequestCode);
 
       expect(response.body).toStrictEqual({ error });
+    });
+  });
+});
+
+describe("Given a PUT /locations/edit-location/:locationId endpoint", () => {
+  const location = getRandomLocation();
+  let locationToUpdate: LocationWithIdStructure;
+  let userToken: string;
+
+  beforeAll(async () => {
+    const user = await User.create({
+      owner: true,
+      password: "password",
+      username: "admin",
+    });
+    userToken = jwt.sign(
+      {
+        id: user._id.toString(),
+        owner: true,
+        username: "admin",
+      } as CustomTokenPayload,
+      jwtSecret
+    );
+
+    locationToUpdate = await Location.create(location);
+  });
+
+  describe("When it receives a correct location id and a new name 'Coworking'", () => {
+    test("Then it should respond with status 200 and the updated location", async () => {
+      const newName = "Coworking";
+
+      const response: { body: { location: LocationStructure } } = await request(
+        app
+      )
+        .put(`${editLocationPath}/${locationToUpdate._id.toString()}`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .field("name", newName)
+        .expect(okCode);
+
+      expect(response.body.location).toHaveProperty("name", newName);
+    });
+  });
+
+  describe("When it receives a correct location id and a new image", () => {
+    test("Then it should respond with status 200 and the updated location", async () => {
+      const timeStamp = Date.now();
+      Date.now = jest.fn().mockReturnValue(timeStamp);
+      const fileData = await fs.readFile(getUploadPath("mockImage.jpg"));
+      const expectedFileName = `mockImage-${timeStamp}.webp`;
+      const expectedSmallFileName = `small-mockImage-${timeStamp}.webp`;
+
+      const response: { body: { location: LocationStructure } } = await request(
+        app
+      )
+        .put(`${editLocationPath}/${locationToUpdate._id.toString()}`)
+        .set("Authorization", `Bearer ${userToken}`)
+        .attach("image", fileData, `${__dirname}/mockImage.jpg`)
+        .expect(okCode);
+
+      const {
+        body: {
+          location: {
+            images: { image, small },
+          },
+        },
+      } = response;
+
+      expect(image).toContain(expectedFileName);
+      expect(small).toContain(expectedSmallFileName);
     });
   });
 });
