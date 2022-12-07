@@ -90,7 +90,7 @@ export const getLocations = async (
 
     const count = await Location.countDocuments(filter);
 
-    const [next, previous] = getLinks(req, count, services as string);
+    const [next, previous] = getLinks(req, count, false, services as string);
 
     res.status(okCode).json({ count, next, previous, locations });
   } catch (error: unknown) {
@@ -115,7 +115,7 @@ export const getMyLocations = async (
 
     const count = await Location.countDocuments({ owner: userId });
 
-    const [next, previous] = getLinks(req, count);
+    const [next, previous] = getLinks(req, count, true);
 
     res.status(okCode).json({ count, next, previous, locations });
   } catch (error: unknown) {

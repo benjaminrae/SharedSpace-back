@@ -266,8 +266,8 @@ describe("Given a getMyLocations controller", () => {
       req.url = "/locations";
       const host = "sharedspace.com";
       req.get = jest.fn().mockReturnValue(host);
-      const nextUrl = `${req.protocol}://${host}${req.url}?page=3&limit=10`;
-      const previous = `${req.protocol}://${host}${req.url}?page=1&limit=10`;
+      const nextUrl = `${req.protocol}://${host}${req.url}/my-locations?page=3&limit=10`;
+      const previous = `${req.protocol}://${host}${req.url}/my-locations?page=1&limit=10`;
       const locations = getRandomLocations(30);
       req.userId = locations[0].owner.toString();
       req.query = {
