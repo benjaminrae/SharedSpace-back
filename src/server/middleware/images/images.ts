@@ -33,8 +33,12 @@ export const backupImages = async (
     const mainImageContents = await fs.readFile(mainImageName);
     const smallImageContents = await fs.readFile(smallImageName);
 
-    await bucket.upload(mainImageName, mainImageContents);
-    await bucket.upload(smallImageName, smallImageContents);
+    await bucket.upload(mainImageName, mainImageContents, {
+      cacheControl: "31536000",
+    });
+    await bucket.upload(smallImageName, smallImageContents, {
+      cacheControl: "31536000",
+    });
 
     const {
       data: { publicUrl: mainPublicUrl },
